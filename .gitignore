@@ -1,5 +1,4 @@
 target/
-<<<<<<< HEAD
 .settings
 # Eclipse m2e generated files
 # Eclipse Core
@@ -23,4 +22,3 @@ buildNumber.properties
 .project
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
->>>>>>> branch 'master' of https://github.com/bizwmh/CAR
