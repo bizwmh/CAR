@@ -5,7 +5,7 @@
 
 	<groupId>biz.car</groupId>
 	<artifactId>biz.car</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.1</version>
 
 	<name>CAR</name>
 	<description>Common Application Runtime</description>

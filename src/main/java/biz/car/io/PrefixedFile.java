@@ -35,7 +35,7 @@ public interface PrefixedFile extends Supplier<File> {
 	/**
 	 * The string pattern for a timestamp prefix.
 	 */
-	String PREFIXED = "yyyyMMdd-HHmmss-SSS-"; //$NON-NLS-1$
+	String PREFIXED = "yyyyMMdd-HHmmss-SSS_"; //$NON-NLS-1$
 
 	/**
 	 * Checks a file name if it has a timestamp prefix.
