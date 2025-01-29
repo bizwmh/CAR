@@ -87,7 +87,7 @@ public interface XLogger {
 		XRuntimeException l_ret = new XRuntimeException(aCause);
 
 		error(l_ret);
-		
+
 		return l_ret;
 	}
 
@@ -100,11 +100,11 @@ public interface XLogger {
 	 * @return the generated runtime exception with the message
 	 */
 	default XRuntimeException exception(Throwable aCause, String aMessage,
-		Object... anArgList) {
+			Object... anArgList) {
 		XRuntimeException l_ret = new XRuntimeException(aCause, aMessage, anArgList);
 
 		logger().error(l_ret.getMessage(), aCause);
-		
+
 		return l_ret;
 	}
 
@@ -116,6 +116,16 @@ public interface XLogger {
 	 */
 	default void info(String aMessage, Object... anArgList) {
 		logger().info(aMessage, anArgList);
+	}
+
+	/**
+	 * Is the logger instance enabled for the DEBUG level?
+	 *
+	 * @return <code>true</code> if this Logger is enabled for the DEBUG level,
+	 *         false otherwise.
+	 */
+	default boolean isDebugEnabled() {
+		return logger().isDebugEnabled();
 	}
 
 	/**

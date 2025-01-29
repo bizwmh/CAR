@@ -12,7 +12,6 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 
 import biz.car.bundle.MSG;
-import biz.car.config.Configurable;
 
 /**
  * General purpose interface for executing a set of operations.<br>
@@ -31,7 +30,7 @@ import biz.car.config.Configurable;
  *
  * @version 1.0.0 17.11.2024 12:59:06
  */
-public interface XRunnable extends Configurable, Runnable {
+public interface XRunnable extends Runnable, XLogger {
 
 	/**
 	 * Releases all allocated resources.<br>
@@ -58,6 +57,16 @@ public interface XRunnable extends Configurable, Runnable {
 	 * Performs the operations of this <code>Exec</code>.
 	 */
 	void exec();
+
+	/**
+	 * @return the label for this <code>Configurable</code>
+	 */
+	String getLabel();
+
+	/**
+	 * @return the name for this <code>Configurable</code>
+	 */
+	String getName();
 
 	/**
 	 * Waits for the completion of a <code>Future</code><br>
