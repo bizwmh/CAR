@@ -12,6 +12,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 
 import biz.car.bundle.MSG;
+import biz.car.config.Configurable;
 
 /**
  * General purpose interface for executing a set of operations.<br>
@@ -25,12 +26,12 @@ import biz.car.bundle.MSG;
  * </ul>
  * The <code>accept</code> method shall be called before the execution is
  * started. The <code>accept</code> method provides a configuration to further
- * initialize the exec.<br>
+ * initialize the runnable.<br>
  * The <code>dispose</code> method performs the final clean up.
  *
  * @version 1.0.0 17.11.2024 12:59:06
  */
-public interface XRunnable extends Runnable, XLogger {
+public interface XRunnable extends Configurable, Runnable {
 
 	/**
 	 * Releases all allocated resources.<br>
@@ -57,16 +58,6 @@ public interface XRunnable extends Runnable, XLogger {
 	 * Performs the operations of this <code>Exec</code>.
 	 */
 	void exec();
-
-	/**
-	 * @return the label for this <code>Configurable</code>
-	 */
-	String getLabel();
-
-	/**
-	 * @return the name for this <code>Configurable</code>
-	 */
-	String getName();
 
 	/**
 	 * Waits for the completion of a <code>Future</code><br>
