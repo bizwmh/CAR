@@ -209,7 +209,7 @@ public class CSVRecord implements DataRecord {
 	 * @throws IndexOutOfBoundsException if the field name is not defined
 	 */
 	@Override
-	public CSVRecord setField(String aName, String aValue) {
+	public CSVRecord setValue(String aName, String aValue) {
 		Objects.requireNonNull(aName);
 		Objects.requireNonNull(aValue);
 

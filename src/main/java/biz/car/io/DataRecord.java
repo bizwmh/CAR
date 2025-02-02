@@ -14,11 +14,12 @@ package biz.car.io;
 public interface DataRecord extends FieldSource {
 
 	/**
-	 * Updates the data record with a new field value:
+	 * Updates the data record with a new field value.
 	 * 
 	 * @param aName the name of the field
-	 * @return the new field value
+	 * @param sValue the new field value
+	 * @return the current <code>DataRecord</code> instance
 	 * @throws IndexOutOfBoundsException if the field name is not defined
 	 */
-	public DataRecord setField(String aName, String aValue);
+	public DataRecord setValue(String aName, String aValue);
 }
