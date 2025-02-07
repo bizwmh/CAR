@@ -9,7 +9,10 @@ package biz.car;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.ThreadFactory;
 
 import biz.car.bundle.MSG;
 import biz.car.config.Configurable;
@@ -18,10 +21,10 @@ import biz.car.config.Configurable;
  * General purpose interface for executing a set of operations.<br>
  * There are 3 methods for 3 different execution modes:
  * <ul>
- * <li>the <code>exec</code> method provides the functionality of the exec
+ * <li>the <code>exec</code> method provides the functionality of the runnable
  * <li>the <code>run</code> method invokes <code>exec</code> but surrounded by a
  * try-catch block
- * <li>the <code>start</code> invokes <code>exec</code> but started in its own
+ * <li>the <code>start</code> invokes <code>run</code> but started in its own
  * thread
  * </ul>
  * The <code>accept</code> method shall be called before the execution is
@@ -29,7 +32,7 @@ import biz.car.config.Configurable;
  * initialize the runnable.<br>
  * The <code>dispose</code> method performs the final clean up.
  *
- * @version 1.0.0 17.11.2024 12:59:06
+ * @version 1.1.0 05.02.2025 07:36:53
  */
 public interface XRunnable extends Configurable, Runnable {
 
@@ -129,7 +132,19 @@ public interface XRunnable extends Configurable, Runnable {
 	}
 
 	/**
-	 * Starts the execution of the exec as a completable future.
+	 * Starts the execution of this runnable as a completable future.<br>
+	 * The name of this runnable is used as the name of the resulting thread.
+	 * 
+	 * @return the new <code>CompletableFuture</code>
+	 */
+	default CompletableFuture<Void> start() {
+		CompletableFuture<Void> l_ret = start(getName());
+
+		return l_ret;
+	}
+
+	/**
+	 * Starts the execution of this runnable as a completable future.
 	 * 
 	 * @param anExecutor the executor to use for asynchronous execution
 	 * @return the new <code>CompletableFuture</code>
@@ -141,15 +156,17 @@ public interface XRunnable extends Configurable, Runnable {
 	}
 
 	/**
-	 * Starts the execution of the exec as a regular thread.
+	 * Starts the execution of this runnable as a completable future.
 	 * 
 	 * @param aName the name for the thread
-	 * @return the new <code>Thread</code>
+	 * @return the new <code>CompletableFuture</code>
 	 */
-	default Thread start(String aName) {
-		Thread l_ret = new Thread(this, aName);
-
-		l_ret.start();
+	default CompletableFuture<Void> start(String aName) {
+		ThreadFactory l_tf = r -> {
+			return new Thread(r, aName);
+		};
+		ExecutorService l_xs = Executors.newCachedThreadPool(l_tf);
+		CompletableFuture<Void> l_ret = start(l_xs);
 
 		return l_ret;
 	}
