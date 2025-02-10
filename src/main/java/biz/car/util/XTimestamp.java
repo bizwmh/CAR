@@ -1,5 +1,5 @@
 /* --------------------------------------------------------------------------
- * Project: DSGI - Data Services Gateway and Interfaces
+ * Project: CAR - Common Application Runtime
  * --------------------------------------------------------------------------
  * Use of this software is subject to license terms. All Rights Reserved. 
  * -------------------------------------------------------------------------- */
