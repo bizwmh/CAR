@@ -58,6 +58,7 @@ public abstract class XTimertask extends ConfigObject implements XRunnable {
 			myTimer.cancel();
 		}
 		myTimer = new Timer(getName());
+<<<<<<< HEAD
 		TimerTask l_task = createTask(this);
 		long l_period = getPeriod();
 
@@ -79,6 +80,29 @@ public abstract class XTimertask extends ConfigObject implements XRunnable {
 			@Override
 			public void run() {
 				aTask.run();
+=======
+		TimerTask l_task = createTask();
+		long l_period = getPeriod();
+
+		myTimer.schedule(l_task, 0, l_period);
+	}
+
+	@Override
+	public void dispose() {
+		if (myTimer != null) {
+			myTimer.cancel();
+
+			myTimer = null;
+		}
+	}
+
+	private TimerTask createTask() {
+		return new TimerTask() {
+
+			@Override
+			public void run() {
+				this.run();
+>>>>>>> branch 'master' of https://github.com/bizwmh/CAR
 			}
 		};
 	}
