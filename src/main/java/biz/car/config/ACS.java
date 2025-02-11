@@ -157,7 +157,7 @@ public interface ACS {
 	/**
 	 * Assigns values to the fields of a class.
 	 * 
-	 * @param aClass the classs where to look up the declared fields
+	 * @param aClass the class where to look up the declared fields
 	 * @param aConf  the configuration. Field names are used as keys, the values are
 	 *               assigned to the class fields
 	 * @param anObj  the object where to set the fields. If <code>null</code> the

@@ -58,7 +58,7 @@ public abstract class XTimertask extends ConfigObject implements XRunnable {
 			myTimer.cancel();
 		}
 		myTimer = new Timer(getName());
-		TimerTask l_task = createTask();
+		TimerTask l_task = createTask(this);
 		long l_period = getPeriod();
 
 		myTimer.schedule(l_task, 0, l_period);
@@ -73,12 +73,12 @@ public abstract class XTimertask extends ConfigObject implements XRunnable {
 		}
 	}
 
-	private TimerTask createTask() {
+	private TimerTask createTask(Runnable aTask) {
 		return new TimerTask() {
 
 			@Override
 			public void run() {
-				this.run();
+				aTask.run();
 			}
 		};
 	}
