@@ -9,10 +9,8 @@ package biz.car.util;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import com.typesafe.config.Config;
-
 import biz.car.SYS;
-import biz.car.XRunnable;
+import biz.car.bundle.MSG;
 import biz.car.config.ConfigObject;
 
 /**
@@ -39,7 +37,7 @@ import biz.car.config.ConfigObject;
  *
  * @version 1.0.0 10.02.2025 12:28:29
  */
-public abstract class XTimertask extends ConfigObject implements XRunnable {
+public abstract class XTimertask extends ConfigObject implements Runnable {
 
 	private Timer myTimer;
 
@@ -50,10 +48,10 @@ public abstract class XTimertask extends ConfigObject implements XRunnable {
 		super();
 	}
 
-	@Override
-	public void accept(Config aConfig) {
-		super.accept(aConfig);
-
+	/**
+	 * Starts the execution of this timer task.
+	 */
+	public void start() {
 		if (myTimer != null) {
 			myTimer.cancel();
 		}
@@ -62,15 +60,19 @@ public abstract class XTimertask extends ConfigObject implements XRunnable {
 		long l_period = getPeriod();
 
 		myTimer.schedule(l_task, 0, l_period);
+		info(MSG.TIMER_STARTED, getName());
 	}
-
-	@Override
-	public void dispose() {
+	
+	/**
+	 * Cancels this timer task.
+	 */
+	public void stop() {
 		if (myTimer != null) {
 			myTimer.cancel();
-
+			
 			myTimer = null;
 		}
+		info(MSG.TIMER_STOPPED, getName());
 	}
 
 	private TimerTask createTask(Runnable aTask) {
@@ -78,7 +80,12 @@ public abstract class XTimertask extends ConfigObject implements XRunnable {
 
 			@Override
 			public void run() {
-				aTask.run();
+				try {
+					aTask.run();
+				} catch (Exception anEx) {
+					myTimer.cancel();
+					error(MSG.TIMER_CANCELLED, getName());
+				}
 			}
 		};
 	}
@@ -91,7 +98,7 @@ public abstract class XTimertask extends ConfigObject implements XRunnable {
 		int l_len = l_period.length();
 		long l_ret = 0;
 
-		if (l_len > 0) {
+		if (l_len > 1) {
 			try {
 				String l_last = l_period.substring(l_len - 1, l_len);
 				long l_factor = 1;
