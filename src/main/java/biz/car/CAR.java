@@ -12,7 +12,7 @@ import biz.car.config.ACS;
 /**
  * CAR constants.
  *
- * @version 1.0.1 10.02.2025 12:32:01
+ * @version 1.0.2 03.03.2025 12:43:04
  */
 public interface CAR {
 	
@@ -36,6 +36,10 @@ public interface CAR {
 	 * The key for the NAME runtime option.<br>
 	 */
 	String NAME = VAR.NAME;
+	/**
+	 * The key for the PATH runtime option.<br>
+	 */
+	String PATH = VAR.PATH;
 	/**
 	 * The key for the PERIOD parameter of a timer task.<br>
 	 */

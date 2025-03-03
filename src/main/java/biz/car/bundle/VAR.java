@@ -11,7 +11,7 @@ import biz.car.config.ACS;
 /**
  * Variable names.
  *
- * @version 1.0.1 10.02.2025 12:31:40
+ * @version 1.0.2 03.03.2025 12:42:44
  */
 public class VAR {
 
@@ -19,6 +19,7 @@ public class VAR {
 	public static String LABEL;
 	public static String LOGGER;
 	public static String NAME;
+	public static String PATH;
 	public static String PERIOD;
 
 	// -------------------------------------------------------------------------
