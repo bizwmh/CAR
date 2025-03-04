@@ -64,7 +64,6 @@ public class CSVFeeder extends ConfigObject implements XRunnable {
 			myConsumer.onExit();
 		} catch (IOException anEx) {
 			myConsumer.onError(anEx);
-			;
 		}
 	}
 
