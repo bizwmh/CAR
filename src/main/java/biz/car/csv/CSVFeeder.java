@@ -15,19 +15,19 @@ import biz.car.config.ConfigObject;
 /**
  * Processes the records of a CSV file.<br>
  * This class loops over the input records and delegates the processing of the
- * individual records to a <code>CSVConsumer</code>.
+ * individual records to a <code>CSVHandler</code>.
  *
  * @version 1.0.0 03.03.2025 12:18:00
  */
 public class CSVFeeder extends ConfigObject implements XRunnable {
 
-	private CSVConsumer myConsumer;
+	private CSVHandler myConsumer;
 	private CSVReader rdr;
 
 	/**
 	 * Creates a default <code>CSVFeeder</code> instance.
 	 */
-	public CSVFeeder(CSVConsumer aConsumer) {
+	public CSVFeeder(CSVHandler aConsumer) {
 		super();
 
 		rdr = new CSVReader();
@@ -57,7 +57,7 @@ public class CSVFeeder extends ConfigObject implements XRunnable {
 			CSVRecord l_rec = rdr.readRecord();
 
 			while (l_rec != null) {
-				myConsumer.accept(l_rec);
+				myConsumer.handle(l_rec);
 
 				l_rec = rdr.readRecord();
 			}
