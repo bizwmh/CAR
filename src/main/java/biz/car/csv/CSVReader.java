@@ -98,9 +98,11 @@ public class CSVReader extends XFileReader {
 	 * @param the CSV delimiter
 	 * @throws IllegalStateException if the delimiter has already been set.
 	 */
-	public void setDlimiter(String aDelim) {
+	public void setDelimiter(String aDelim) {
 		if (myParser == null) {
 			delim = Objects.requireNonNull(aDelim);
+			
+			return;
 		}
 		throw new IllegalStateException();
 	}
