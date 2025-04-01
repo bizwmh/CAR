@@ -15,7 +15,7 @@ import biz.car.config.ACS;
  * @version 1.0.2 03.03.2025 12:43:04
  */
 public interface CAR {
-	
+
 	/**
 	 * The default date format
 	 */
@@ -24,6 +24,10 @@ public interface CAR {
 	 * The key for the EXEC runtime option.<br>
 	 */
 	String EXEC = VAR.EXEC;
+	/**
+	 * Key for the input runtime option
+	 */
+	String INPUT = VAR.INPUT;
 	/**
 	 * The key for the LABEL runtime option.<br>
 	 */
@@ -36,6 +40,10 @@ public interface CAR {
 	 * The key for the NAME runtime option.<br>
 	 */
 	String NAME = VAR.NAME;
+	/**
+	 * Key for the output runtime option
+	 */
+	String OUTPUT = VAR.OUTPUT;
 	/**
 	 * The key for the PATH runtime option.<br>
 	 */
