@@ -11,13 +11,15 @@ import biz.car.util.SFI;
 /**
  * Application wide constants.
  *
- * @version 1.0.0 11.10.2024 06:31:56
+ * @version 1.0.1 01.04.2025 11:48:30
  */
 public class VAL {
 
 	public static String _conf;
+	public static String _csv;
 	public static String _jar;
 	public static String _properties;
+	public static String _sql;
 
 	// -------------------------------------------------------------------------
 	// Initialize the static fields
