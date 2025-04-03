@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 import biz.car.io.DataRecord;
 
 /**
- * A data record in CSV formst.
+ * A data record in CSV format.
  *
  * @version 1.0.0 16.10.2024 15:59:18
  */
