@@ -203,7 +203,7 @@ public class CSVRecord implements DataRecord {
 	 * 
 	 * @param aName  the name of the field as given in the CSV header.
 	 * @param aValue the value to set
-	 * @return the new CSV record instance with the given field value.
+	 * @return the current CSV record instance with the given field value.
 	 * @throws NullPointerException      if one of the parameters is
 	 *                                   <code>null</code>
 	 * @throws IndexOutOfBoundsException if the field name is not defined
@@ -214,12 +214,10 @@ public class CSVRecord implements DataRecord {
 		Objects.requireNonNull(aValue);
 
 		int l_ind = hdr.columns.indexOf(aName);
-		CSVRecord l_ret = new CSVRecord(hdr);
-		l_ret.fields = new ArrayList<>(fields);
 
-		l_ret.fields.set(l_ind, aValue);
+		fields.set(l_ind, aValue);
 
-		return l_ret;
+		return this;
 	}
 
 	@Override

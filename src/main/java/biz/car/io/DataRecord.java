@@ -17,7 +17,7 @@ public interface DataRecord extends FieldSource {
 	 * Updates the data record with a new field value.
 	 * 
 	 * @param aName the name of the field
-	 * @param sValue the new field value
+	 * @param aValue the new field value
 	 * @return the current <code>DataRecord</code> instance
 	 * @throws IndexOutOfBoundsException if the field name is not defined
 	 */
