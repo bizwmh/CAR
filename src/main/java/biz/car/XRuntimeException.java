@@ -7,7 +7,10 @@
 package biz.car;
 
 /**
- * An unchecked exception indicating an error during an application operation.
+ * An unchecked exception indicating an error during an application
+ * operation.<br>
+ * As a convention the class throwing the exception should also write the error
+ * message to the application log.
  *
  * @version 1.0.0 11.10.2024 06:00:40
  */
@@ -16,8 +19,7 @@ public class XRuntimeException extends RuntimeException {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Creates a default <code>XException</code> instance without detail
-	 * message.
+	 * Creates a default <code>XException</code> instance without detail message.
 	 */
 	public XRuntimeException() {
 		super();
@@ -38,8 +40,7 @@ public class XRuntimeException extends RuntimeException {
 	 * 
 	 * @param aCause the cause of the exception
 	 */
-	public XRuntimeException(Throwable aCause)
-	{
+	public XRuntimeException(Throwable aCause) {
 		super(aCause);
 	}
 
@@ -51,15 +52,15 @@ public class XRuntimeException extends RuntimeException {
 	 * @param anArgList the message variables
 	 */
 	public XRuntimeException(Throwable aCause, String aMessage,
-		Object... anArgList) {
+			Object... anArgList) {
 		super(XLogger.format(aMessage, anArgList), aCause);
 	}
 
 	/**
 	 * This implementation returns a non-null message text.<br>
-	 * If the message of this exception is <code>null</code> then the message
-	 * from a cause is looked up. If no message can be found at all the simple
-	 * class name of the exception is returned.
+	 * If the message of this exception is <code>null</code> then the message from a
+	 * cause is looked up. If no message can be found at all the simple class name
+	 * of the exception is returned.
 	 * 
 	 * @return the message text for this exception
 	 */
@@ -81,8 +82,8 @@ public class XRuntimeException extends RuntimeException {
 	/**
 	 * Builds an error message from the given exception.<br>
 	 * If the exception contains a cause then the message will be built from the
-	 * cause. The message will be prefixed with class and method name from the
-	 * stack trace.
+	 * cause. The message will be prefixed with class and method name from the stack
+	 * trace.
 	 * 
 	 * @return the formatted message
 	 */
