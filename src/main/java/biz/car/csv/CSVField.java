@@ -13,7 +13,7 @@ import java.util.regex.Matcher;
  * Functions to convert field content from CSV format to display format and vice
  * versa.
  *
- * @version 1.0.0 16.10.2024 16:00:04 
+ * @version 2.0.0 09.10.2025 12:48:13
  */
 public interface CSVField {
 

@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * The header of a CSV file.
  *
- * @version 1.0.0 16.10.2024 15:59:53
+ * @version 2.0.0 09.10.2025 12:48:13
  */
 public interface CSVHeader {
 

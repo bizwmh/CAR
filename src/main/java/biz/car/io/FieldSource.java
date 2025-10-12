@@ -12,7 +12,7 @@ import java.util.Optional;
 /**
  * A general purpose interface for retrieving field values from any data source.
  *
- * @version 1.0.0 16.10.2024 15:57:48
+ * @version 2.0.0 09.10.2025 12:48:13
  */
 public interface FieldSource {
 

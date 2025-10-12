@@ -11,16 +11,15 @@ import biz.car.config.ACS;
 /**
  * Variable names.
  *
- * @version 1.0.2 03.03.2025 12:42:44
+ * @version 2.0.0 09.10.2025 11:18:52
  */
 public class VAR {
 
-	public static String EXEC;
-	public static String INPUT;
-	public static String LABEL;
+//	public static String EXEC;
+//	public static String INPUT;
 	public static String LOGGER;
-	public static String NAME;
-	public static String OUTPUT;
+//	public static String NAME;
+//	public static String OUTPUT;
 	public static String PATH;
 	public static String PERIOD;
 

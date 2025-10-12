@@ -18,7 +18,7 @@ import biz.car.io.XFileReader;
 /**
  * A <code>CSVReader</code> reads text input from a CSV file on the file system.
  *
- * @version 1.0.0 16.10.2024 15:59:28
+ * @version 2.0.0 09.10.2025 12:48:13
  */
 public class CSVReader extends XFileReader {
 

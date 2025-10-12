@@ -20,40 +20,21 @@ import biz.car.util.ClassUtil;
 
 /**
  * Application configuration support.<br>
- * Resources are assumed to be class path resources. The application class
- * loader is used to find resources.
+ * Resources are assumed to be on the class path of the application.
  *
- * @version 1.0.0 01.11.2024 11:18:22
+ * @version 2.0.0 06.10.2025 18:23:07
  */
 public interface ACS {
 
 	/**
 	 * The runtime options of the application.
 	 */
-	XConfig APP = new ConfigObject(ConfigFactory.load());
+	XConfig APP = new ConfigAdapter(ConfigFactory.load());
 
 	/**
 	 * The JVM environment variables
 	 */
-	XConfig ENV = new ConfigObject(ConfigFactory.systemEnvironment());
-
-	/**
-	 * Creates a <code>ConfigObject</code> instance.
-	 * <p>
-	 * The configuration is loaded from a classpath resource with the simple class
-	 * name as the resource base name. The extension may be .conf, .json or
-	 * .properties.
-	 *
-	 * @param aClass the class to use for creating the new <code>ConfigObject</code>
-	 *               instance.
-	 * @return the new <code>ConfigObject</code>
-	 */
-	static <T extends ConfigObject> T configObject(Class<?> aClass) {
-		Config l_conf = ConfigFactory.load(aClass.getSimpleName());
-		T l_ret = ClassUtil.newInstance(aClass, l_conf);
-
-		return l_ret;
-	}
+	XConfig ENV = new ConfigAdapter(ConfigFactory.systemEnvironment());
 
 	/**
 	 * Static class fields will be initialized by the values found in the
@@ -63,8 +44,7 @@ public interface ACS {
 	 * name is not a key value then the '_' is replaced by '.' and then used again
 	 * as a key value.
 	 * 
-	 * @param aClass  the class loader of the given class will be used to find the
-	 *                resource
+	 * @param aClass the class where to initialize the static field members
 	 * @param aConfig the configuration file providing the values
 	 * @return the configuration used to initialize the class
 	 */
@@ -89,7 +69,8 @@ public interface ACS {
 	 * @return the configuration used to initialize the class
 	 */
 	static Config initialize(Class<?> aClass, String aName) {
-		Config l_ret = ConfigFactory.load(aName);
+		ClassLoader l_cl = aClass.getClassLoader();
+		Config l_ret = ConfigFactory.load(l_cl, aName);
 
 		setFields(aClass, l_ret, null);
 
@@ -106,7 +87,7 @@ public interface ACS {
 	 * 
 	 * @param anObject the class instance whose fields to initialize
 	 * @param aConfig  the configuration to use for the initialization
-	 * @return the <code>Config</code> from the given <code>ACS</code>
+	 * @return the configuration used to initialize the class
 	 */
 	static Config initialize(Object anObject, Config aConfig) {
 		Config l_ret = Objects.requireNonNull(aConfig);
@@ -126,10 +107,11 @@ public interface ACS {
 	 * 
 	 * @param anObject the class instance whose fields to initialize
 	 * @param aName    the name of the configuration file
-	 * @return the <code>Config</code> from the given <code>ACS</code>
+	 * @return the configuration used to initialize the class
 	 */
 	static Config initialize(Object anObject, String aName) {
-		Config l_ret = ConfigFactory.load(aName);
+		ClassLoader l_cl = anObject.getClass().getClassLoader();
+		Config l_ret = ConfigFactory.load(l_cl, aName);
 
 		setFields(anObject.getClass(), l_ret, anObject);
 
@@ -147,6 +129,26 @@ public interface ACS {
 	static Optional<Config> parseResource(String aName) {
 		Config l_ret = null;
 		Optional<URL> l_url = ClassUtil.getResource(aName);
+
+		if (l_url.isPresent()) {
+			l_ret = ConfigFactory.parseURL(l_url.get());
+		}
+		return Optional.ofNullable(l_ret);
+	}
+
+	/**
+	 * Loads a configuration from a resource on the class path.<br>
+	 * The resulting configuration will only contain the configuration entries from
+	 * the given resource.
+	 *
+	 * @param aClass the class loader of the given class will be used to find the
+	 *               resource
+	 * @param aName  the name of the configuration resource
+	 * @return the optional configuration used to initialize the class
+	 */
+	static Optional<Config> parseResource(Class<?> aClass, String aName) {
+		Config l_ret = null;
+		Optional<URL> l_url = ClassUtil.getResource(aClass, aName);
 
 		if (l_url.isPresent()) {
 			l_ret = ConfigFactory.parseURL(l_url.get());

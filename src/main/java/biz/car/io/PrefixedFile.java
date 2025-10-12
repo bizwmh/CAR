@@ -18,7 +18,7 @@ import biz.car.util.XTimestamp;
  * Timestamp related functions for the last modified date of the file and a file
  * name prefix.
  *
- * @version 1.0.0 16.10.2024 15:56:13
+ * @version 2.0.0 09.10.2025 12:48:13
  */
 public interface PrefixedFile extends Supplier<File> {
 

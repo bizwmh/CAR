@@ -14,7 +14,7 @@ import java.util.regex.Matcher;
 /**
  * Breaks a CSV text line into fields.
  *
- * @version 1.0.0 16.10.2024 15:59:40
+ * @version 2.0.0 09.10.2025 12:48:13
  */
 public class CSVParser {
 

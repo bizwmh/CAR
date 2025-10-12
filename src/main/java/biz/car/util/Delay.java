@@ -13,7 +13,7 @@ import biz.car.SYS;
 /**
  * Creates a wait in current thread.
  * 
- * @version 1.0.0 16.10.2024 15:24:10
+ * @version 2.0.0 06.10.2025 19:12:45
  */
 public interface Delay {
 

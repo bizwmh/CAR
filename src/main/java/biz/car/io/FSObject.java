@@ -13,7 +13,7 @@ import java.util.function.Predicate;
 /**
  * Represents a file store in the local file system.
  *
- * @version 1.0.0 16.10.2024 15:56:26
+ * @version 2.0.0 09.10.2025 12:48:13
  */
 @FunctionalInterface
 public interface FSObject extends PrefixedFile {

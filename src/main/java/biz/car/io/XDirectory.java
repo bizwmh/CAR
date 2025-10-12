@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 /**
  * Provides directory related functions.
  *
- * @version 1.0.0 16.10.2024 15:55:46
+ * @version 2.0.0 09.10.2025 12:48:13
  */
 public class XDirectory implements FSObject {
 

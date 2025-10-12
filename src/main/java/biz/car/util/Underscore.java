@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
  * <li>a triple underscore is replaced by an underscore '_'
  * </ul>
  *
- * @version 1.0.0 11.10.2024 06:23:13
+ * @version 2.0.0 06.10.2025 14:03:15
  */
 public interface Underscore {
 

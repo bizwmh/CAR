@@ -9,7 +9,7 @@ package biz.car.util;
 /**
  * Provides the simple name of a package.
  * 
- * @version 1.0.0 23.10.2024 11:57:56
+ * @version 2.0.0 09.10.2025 12:33:05
  */
 public interface SimplePackageName {
 

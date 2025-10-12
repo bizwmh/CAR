@@ -11,7 +11,7 @@ import biz.car.util.SFI;
 /**
  * Application wide constants.
  *
- * @version 1.0.1 01.04.2025 11:48:30
+ * @version 2.0.0 06.10.2025 14:01:34
  */
 public class VAL {
 

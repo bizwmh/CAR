@@ -17,7 +17,7 @@ import biz.car.bundle.MSG;
 /**
  * <code>Class</code> related functions.
  * 
- * @version 1.0.0 11.10.2024 06:20:01
+ * @version 2.0.0 12.10.2025 16:47:05
  */
 public interface ClassUtil {
 
@@ -49,7 +49,10 @@ public interface ClassUtil {
 	 * @return the optional URL of the resource.
 	 */
 	static Optional<URL> getResource(String aResource) {
-		return getResource(ClassUtil.class, aResource);
+		ClassLoader l_cl = Thread.currentThread().getContextClassLoader();
+		URL l_ret = l_cl.getResource(aResource);
+
+		return Optional.ofNullable(l_ret);
 	}
 
 	/**

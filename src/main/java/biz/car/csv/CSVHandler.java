@@ -11,7 +11,7 @@ package biz.car.csv;
  * The CSVFeeder uses a reference to a CSVHandler instance for processing the
  * input CSV records.
  *
- * @version 1.0.0 03.03.2025 12:10:17
+ * @version 2.0.0 09.10.2025 12:48:13
  */
 public interface CSVHandler {
 

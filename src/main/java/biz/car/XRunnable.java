@@ -6,40 +6,26 @@
 
 package biz.car;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ThreadFactory;
-
 import biz.car.bundle.MSG;
-import biz.car.config.Configurable;
 
 /**
- * General purpose interface for executing a set of operations.<br>
- * There are 3 methods for 3 different execution modes:
+ * General purpose interface for executing a set of operations:<br>
  * <ul>
  * <li>the <code>exec</code> method provides the functionality of the runnable
- * <li>the <code>run</code> method invokes <code>exec</code> but surrounded by a
- * try-catch block
- * <li>the <code>start</code> invokes <code>run</code> but started in its own
+ * <li>the <code>run</code> method invokes <code>exec</code> but surrounds
+ * <code>exec</code> by a try-catch block
  * thread
  * </ul>
- * The <code>accept</code> method shall be called before the execution is
- * started. The <code>accept</code> method provides a configuration to further
- * initialize the runnable.<br>
  * The <code>dispose</code> method performs the final clean up.
  *
- * @version 1.1.0 05.02.2025 07:36:53
+ * @version 2.0.0 06.10.2025 18:13:05
  */
-public interface XRunnable extends Configurable, Runnable {
+public interface XRunnable extends Runnable, XLogger {
 
 	/**
 	 * Releases all allocated resources.<br>
-	 * When this method has finished this <code>Exec</code> instance shall no longer
-	 * be usable.
+	 * When this method has finished this <code>Runnable</code> instance shall no
+	 * longer be usable.
 	 */
 	void dispose();
 
@@ -47,14 +33,14 @@ public interface XRunnable extends Configurable, Runnable {
 	 * Sends an end message to the exec log.
 	 */
 	default void endMessage() {
-		info(MSG.EXEC_ENDED, getLabel(), getName());
+		info(MSG.EXEC_ENDED, getName());
 	}
 
 	/**
 	 * Sends an error message to the exec log.
 	 */
 	default void errorMessage() {
-		info(MSG.EXEC_ABENDED, getLabel(), getName());
+		info(MSG.EXEC_ABENDED, getName());
 	}
 
 	/**
@@ -63,26 +49,10 @@ public interface XRunnable extends Configurable, Runnable {
 	void exec();
 
 	/**
-	 * Waits for the completion of a <code>Future</code><br>
-	 * Exceptions are caught, logged and do not terminate the scenario set.
-	 * 
-	 * @param aThread the <code>Future</code> to wait for
+	 * @return the name for this <code>XConfig</code>
 	 */
-	default void join(Future<?> aThread) {
-		try {
-			// wait for the thread to terminate
-			aThread.get();
-		} catch (InterruptedException anEx) {
-			// just terminate
-		} catch (ExecutionException anEx) {
-			Throwable l_ex = anEx.getCause();
-
-			if (!(l_ex instanceof XRuntimeException)) {
-				// log the exception
-				l_ex = exception(l_ex);
-			}
-			throw (XRuntimeException) l_ex;
-		}
+	default String getName() {
+		return getClass().getSimpleName();
 	}
 
 	/**
@@ -95,12 +65,12 @@ public interface XRunnable extends Configurable, Runnable {
 	}
 
 	/**
-	 * Executes the individual operations of this exec.<br>
+	 * Executes the individual operations of this <code>Runnable</code>.<br>
 	 * This method just invokes the <code>exec</code> method, but wraps it into a
 	 * try-catch block:
 	 * <ul>
 	 * <li><code>XRuntimeException</code>s are re-thrown
-	 * <li><code>Throwable</code>s are written to the SE log and a
+	 * <li><code>Throwable</code>s are written to the system log and a
 	 * <code>XRuntimeException</code> is thrown
 	 * </ul>
 	 * <code>dispose</code> is called in a <code>finally</code> block.
@@ -132,49 +102,9 @@ public interface XRunnable extends Configurable, Runnable {
 	}
 
 	/**
-	 * Starts the execution of this runnable as a completable future.<br>
-	 * The name of this runnable is used as the name of the resulting thread.
-	 * 
-	 * @return the new <code>CompletableFuture</code>
-	 */
-	default CompletableFuture<Void> start() {
-		CompletableFuture<Void> l_ret = start(getName());
-
-		return l_ret;
-	}
-
-	/**
-	 * Starts the execution of this runnable as a completable future.
-	 * 
-	 * @param anExecutor the executor to use for asynchronous execution
-	 * @return the new <code>CompletableFuture</code>
-	 */
-	default CompletableFuture<Void> start(Executor anExecutor) {
-		CompletableFuture<Void> l_ret = CompletableFuture.runAsync(this, anExecutor);
-
-		return l_ret;
-	}
-
-	/**
-	 * Starts the execution of this runnable as a completable future.
-	 * 
-	 * @param aName the name for the thread
-	 * @return the new <code>CompletableFuture</code>
-	 */
-	default CompletableFuture<Void> start(String aName) {
-		ThreadFactory l_tf = r -> {
-			return new Thread(r, aName);
-		};
-		ExecutorService l_xs = Executors.newCachedThreadPool(l_tf);
-		CompletableFuture<Void> l_ret = start(l_xs);
-
-		return l_ret;
-	}
-
-	/**
 	 * Sends a start message to the exec log.
 	 */
 	default void startMessage() {
-		info(MSG.EXEC_STARTED, getLabel(), getName());
+		info(MSG.EXEC_STARTED, getName());
 	}
 }

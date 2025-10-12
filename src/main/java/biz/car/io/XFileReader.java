@@ -19,7 +19,7 @@ import java.nio.charset.StandardCharsets;
  * A <code>XFileReader</code> can be used to read text input from a file on the
  * file system.
  *
- * @version 1.0.0 16.10.2024 15:55:23
+ * @version 2.0.0 09.10.2025 12:48:13
  */
 public class XFileReader implements Closeable {
 

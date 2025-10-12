@@ -16,7 +16,7 @@ import java.nio.charset.StandardCharsets;
 /**
  * A <code>XFileWriter</code> can be used to write text output.
  *
- * @version 1.0.0 16.10.2024 15:54:43
+ * @version 2.0.0 09.10.2025 12:48:13
  */
 public class XFileWriter implements Closeable {
 

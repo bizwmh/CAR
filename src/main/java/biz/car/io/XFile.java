@@ -12,7 +12,7 @@ import java.io.File;
  * A <code>XFile</code> wraps a file of the local file system that is not a
  * directory.
  *
- * @version 1.0.0 16.10.2024 15:55:35
+ * @version 2.0.0 09.10.2025 12:48:13
  */
 public class XFile implements FSObject {
 

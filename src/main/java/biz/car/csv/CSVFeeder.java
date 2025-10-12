@@ -10,16 +10,16 @@ import java.io.File;
 import java.io.IOException;
 
 import biz.car.XRunnable;
-import biz.car.config.ConfigObject;
+import biz.car.config.ConfigAdapter;
 
 /**
  * Processes the records of a CSV file.<br>
  * This class loops over the input records and delegates the processing of the
  * individual records to a <code>CSVHandler</code>.
  *
- * @version 1.0.0 03.03.2025 12:18:00
+ * @version 2.0.0 09.10.2025 12:48:13
  */
-public class CSVFeeder extends ConfigObject implements XRunnable {
+public class CSVFeeder extends ConfigAdapter implements XRunnable {
 
 	private CSVHandler myConsumer;
 	private CSVReader rdr;

@@ -9,8 +9,6 @@ package biz.car.util;
 import java.lang.reflect.Field;
 import java.util.stream.Stream;
 
-import biz.car.SYS;
-
 /**
  * String Field Initializer.
  * <p>
@@ -22,7 +20,7 @@ import biz.car.SYS;
  * <li>a triple underscore is replaced by an underscore '_'
  * </ul>
  *
- * @version 1.0.0 11.10.2024 06:26:38
+ * @version 2.0.0 06.10.2025 14:02:46
  */
 public interface SFI {
 
@@ -74,7 +72,7 @@ public interface SFI {
 					field.set(anObject, l_name);
 				} catch (IllegalArgumentException
 					| IllegalAccessException anEx) {
-					throw SYS.LOG.exception(anEx);
+					throw new RuntimeException(anEx);
 				}
 			});
 	}

@@ -14,7 +14,7 @@ import biz.car.config.ACS;
 /**
  * Represents a point in time.
  *
- * @version 1.0.0 18.10.2023 16:08:48
+ * @version 2.0.0 09.10.2025 12:33:55
  */
 public class XTimestamp {
 

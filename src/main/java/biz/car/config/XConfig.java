@@ -29,7 +29,7 @@ import biz.car.util.Underscore;
 /**
  * Provides access to the values of a configuration.
  * 
- * @version 1.0.0 01.11.2024 10:18:08
+ * @version 2.0.0 06.10.2025 18:28:37
  */
 @FunctionalInterface
 public interface XConfig {
@@ -187,6 +187,13 @@ public interface XConfig {
 	 */
 	default int getInt(String aKey) {
 		return config().getInt(aKey);
+	}
+
+	/**
+	 * @return the name for this <code>XConfig</code>
+	 */
+	default String getName() {
+		return getClass().getSimpleName();
 	}
 
 	/**

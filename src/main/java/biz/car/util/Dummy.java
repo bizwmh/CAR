@@ -10,7 +10,7 @@ import com.typesafe.config.Config;
 
 import biz.car.CAR;
 import biz.car.XRunnable;
-import biz.car.config.ConfigObject;
+import biz.car.config.ConfigAdapter;
 
 /**
  * A runnable, but dummy configuration object.<br>
@@ -18,7 +18,7 @@ import biz.car.config.ConfigObject;
  *
  * @version 1.0.0 13.02.2025 05:01:09
  */
-public class Dummy extends ConfigObject implements XRunnable, CAR {
+public class Dummy extends ConfigAdapter implements CAR, XRunnable {
 
 	private Long period;
 

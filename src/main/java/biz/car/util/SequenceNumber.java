@@ -10,7 +10,7 @@ package biz.car.util;
  * Provides an integer sequence number. The display length is fixed, i.e. the
  * number of digits is fixed and leading zeroes will be added.
  * 
- * @version 1.0.0 16.10.2024 15:24:41
+ * @version 2.0.0 09.10.2025 12:32:35
  */
 public class SequenceNumber {
 

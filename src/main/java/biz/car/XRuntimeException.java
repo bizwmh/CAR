@@ -12,7 +12,7 @@ package biz.car;
  * As a convention the class throwing the exception should also write the error
  * message to the application log.
  *
- * @version 1.0.0 11.10.2024 06:00:40
+ * @version 2.0.0 06.10.2025 14:09:20
  */
 public class XRuntimeException extends RuntimeException {
 

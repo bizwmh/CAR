@@ -18,7 +18,7 @@ import biz.car.io.DataRecord;
 /**
  * A data record in CSV format.
  *
- * @version 1.0.0 16.10.2024 15:59:18
+ * @version 2.0.0 09.10.2025 12:48:13
  */
 public class CSVRecord implements DataRecord {
 

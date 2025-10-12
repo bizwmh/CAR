@@ -9,7 +9,7 @@ package biz.car.io;
 /**
  * A general purpose interface for a modifiable data source.
  *
- * @version 1.0.0 16.10.2024 15:58:00
+ * @version 2.0.0 09.10.2025 12:48:13
  */
 public interface DataRecord extends FieldSource {
 

@@ -18,20 +18,10 @@ import biz.car.XLogger;
  * the currently assigned configuration. Instance fields are initialized with
  * the values from the configuration.
  *
- * @version 1.0.0 04.11.2024 10:32:25
+ * @version 2.0.0 06.10.2025 18:26:18
  */
 public interface Configurable extends
 		Consumer<Config>,
 		XConfig,
 		XLogger {
-
-	/**
-	 * @return the label for this <code>Configurable</code>
-	 */
-	String getLabel();
-
-	/**
-	 * @return the name for this <code>Configurable</code>
-	 */
-	String getName();
 }

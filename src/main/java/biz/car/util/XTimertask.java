@@ -11,7 +11,7 @@ import java.util.TimerTask;
 
 import biz.car.SYS;
 import biz.car.bundle.MSG;
-import biz.car.config.ConfigObject;
+import biz.car.config.ConfigAdapter;
 
 /**
  * A Java <code>TimerTask</code> controlled by an external configuration file
@@ -35,9 +35,9 @@ import biz.car.config.ConfigObject;
  * </dl>
  * </ul>
  *
- * @version 1.0.0 10.02.2025 12:28:29
+ * @version 2.0.0 09.10.2025 12:45:52
  */
-public abstract class XTimertask extends ConfigObject implements Runnable {
+public abstract class XTimertask extends ConfigAdapter implements Runnable {
 
 	private Timer myTimer;
 

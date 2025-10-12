@@ -11,7 +11,7 @@ import biz.car.config.ACS;
 /**
  * Bundle messages.
  *
- * @version 1.0.0 11.10.2024 06:19:13
+ * @version 2.0.0 06.10.2025 18:22:26
  */
 public class MSG {
 

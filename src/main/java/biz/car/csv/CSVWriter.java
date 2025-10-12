@@ -15,7 +15,7 @@ import biz.car.io.XFileWriter;
 /**
  * A file writer for a file in CSV format.
  *
- * @version 1.0.0 16.10.2024 15:59:08
+ * @version 2.0.0 09.10.2025 12:48:13
  */
 public class CSVWriter extends XFileWriter {
 

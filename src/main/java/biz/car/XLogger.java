@@ -15,7 +15,7 @@ import org.slf4j.helpers.MessageFormatter;
  * Any class implementing this interface can then use these SLF4J logging
  * functions via class methods.
  *
- * @version 1.0.0 11.10.2024 05:59:21
+ * @version 2.0.0 06.10.2025 14:06:30
  */
 @FunctionalInterface
 public interface XLogger {

@@ -14,12 +14,10 @@ import org.slf4j.LoggerFactory;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 
-import biz.car.config.ACS;
-
 /**
  * Runtime features of the JVM system environment.
  *
- * @version 1.0.0 11.10.2024 06:07:15
+ * @version 2.0.0 06.10.2025 14:06:50
  */
 public class SYS implements XLogger {
 
@@ -59,21 +57,11 @@ public class SYS implements XLogger {
 
 	/**
 	 * Creates a <code>SYS</code> instance.
-	 * 
-	 * @param aName the name of the system logger to be used
-	 */
-	public SYS(String aName) {
-		super();
-
-		String l_name = ACS.APP.getString(aName);
-		logger = LoggerFactory.getLogger(l_name);
-	}
-
-	/**
-	 * Creates a <code>SYS</code> instance for the default system logger.
 	 */
 	private SYS() {
-		this("systemLogger"); //$NON-NLS-1$
+		super();
+
+		logger = LoggerFactory.getLogger("systemLogger"); //$NON-NLS-1$
 	}
 
 	@Override
