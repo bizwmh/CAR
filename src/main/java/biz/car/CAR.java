@@ -7,6 +7,7 @@
 package biz.car;
 
 import biz.car.bundle.VAR;
+import biz.car.config.ACS;
 
 /**
  * CAR constants.
@@ -15,34 +16,30 @@ import biz.car.bundle.VAR;
  */
 public interface CAR {
 
-//	/**
-//	 * The default date format
-//	 */
-//	String DF_DATE = ACS.APP.getString("dateFormat"); //$NON-NLS-1$
-//	/**
-//	 * The key for the EXEC runtime option.<br>
-//	 */
-//	String EXEC = VAR.EXEC;
-//	/**
-//	 * Key for the input runtime option
-//	 */
-//	String INPUT = VAR.INPUT;
-//	/**
-//	 * The key for the LABEL runtime option.<br>
-//	 */
-//	String LABEL = VAR.LABEL;
+	/**
+	 * The default date format
+	 */
+	String DF_DATE = ACS.APP.getString("dateFormat"); //$NON-NLS-1$
+	/**
+	 * The key for the EXEC runtime option.<br>
+	 */
+	String EXEC = VAR.EXEC;
+	/**
+	 * Key for the input runtime option
+	 */
+	String INPUT = VAR.INPUT;
 	/**
 	 * The key for the LOGGER runtime option.<br>
 	 */
 	String LOGGER = VAR.LOGGER;
-//	/**
-//	 * The key for the NAME runtime option.<br>
-//	 */
-//	String NAME = VAR.NAME;
-//	/**
-//	 * Key for the output runtime option
-//	 */
-//	String OUTPUT = VAR.OUTPUT;
+	/**
+	 * The key for the NAME runtime option.<br>
+	 */
+	String NAME = VAR.NAME;
+	/**
+	 * Key for the output runtime option
+	 */
+	String OUTPUT = VAR.OUTPUT;
 	/**
 	 * The key for the PATH runtime option.<br>
 	 */
