@@ -29,12 +29,12 @@ public interface ACS {
 	/**
 	 * The runtime options of the application.
 	 */
-	XConfig APP = new ConfigAdapter(ConfigFactory.load());
+	Config APP = ConfigFactory.load();
 
 	/**
 	 * The JVM environment variables
 	 */
-	XConfig ENV = new ConfigAdapter(ConfigFactory.systemEnvironment());
+	Config ENV = ConfigFactory.systemEnvironment();
 
 	/**
 	 * Static class fields will be initialized by the values found in the
@@ -194,6 +194,6 @@ public interface ACS {
 	 * @return this configuration backed up with the application runtime options.
 	 */
 	static Config withFallbackApp(Config aConfig) {
-		return aConfig.withFallback(APP.config());
+		return aConfig.withFallback(APP);
 	}
 }
