@@ -92,10 +92,7 @@ public class ConfigAdapter implements CAR, Configurable {
 
 	@Override
 	public String getName() {
-		if (name == null) {
-			name = getClass().getSimpleName();
-		}
-		return name;
+		return name == null ? Configurable.super.getName() : name;
 	}
 
 	@Override
