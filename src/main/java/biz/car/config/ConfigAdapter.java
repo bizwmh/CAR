@@ -58,10 +58,8 @@ public class ConfigAdapter implements CAR, Configurable {
 	 * @param aName the name of the configuration object
 	 */
 	public ConfigAdapter(String aName) {
-		super();
+		this();
 
-		conf = EMPTY;
-		logger = SYS.LOG.logger();
 		name = aName;
 	}
 
