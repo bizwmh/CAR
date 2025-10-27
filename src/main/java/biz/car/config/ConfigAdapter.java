@@ -6,6 +6,8 @@
 
 package biz.car.config;
 
+import java.util.Objects;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,8 +50,9 @@ public class ConfigAdapter implements CAR, Configurable {
 	public ConfigAdapter(Config aConfig) {
 		super();
 
-		conf = ACS.initialize(this, aConfig);
+		conf = Objects.requireNonNull(aConfig);
 		logger = loggerFromConfig();
+		name = getString(NAME, null);
 	}
 
 	/**
@@ -73,14 +76,8 @@ public class ConfigAdapter implements CAR, Configurable {
 	@Override
 	public void accept(Config aConfig) {
 		conf = aConfig.withFallback(conf);
-		String l_name = name;
+		name = getString(NAME, name);
 		logger = loggerFromConfig();
-
-		ACS.initialize(this, conf);
-
-		if (l_name != null) {
-			name = l_name; // name is immutable
-		}
 	}
 
 	@Override
