@@ -7,6 +7,7 @@
 package biz.car.csv;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * The header of a CSV file.
@@ -51,4 +52,12 @@ public interface CSVHeader {
 	 * @return the new CSV record instance
 	 */
 	CSVRecord Record(List<String> aList);
+
+	/**
+	 * Constructor method for a new CSV record with this header.
+	 * 
+	 * @param aMap a map of record field values
+	 * @return the new CSV record instance
+	 */
+	CSVRecord Record(Map<String, String> aMap);
 }

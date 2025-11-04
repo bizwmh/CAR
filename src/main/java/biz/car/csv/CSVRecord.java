@@ -8,12 +8,14 @@ package biz.car.csv;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import biz.car.io.DataRecord;
+import biz.car.io.FieldSource;
 
 /**
  * A data record in CSV format.
@@ -86,6 +88,21 @@ public class CSVRecord implements DataRecord {
 			List<String> l_list = ensureSize(aList);
 			CSVRecord l_ret = new CSVRecord(this);
 			l_ret.fields = l_list;
+
+			return l_ret;
+		}
+
+		@Override
+		public CSVRecord Record(Map<String, String> aMap) {
+			CSVRecord l_ret = new CSVRecord(this);
+			l_ret.fields = columns.stream()
+					.map(s -> {
+						if (aMap.containsKey(s)) {
+							return aMap.get(s);
+						}
+						return ""; //$NON-NLS-1$
+					})
+					.collect(Collectors.toList());
 
 			return l_ret;
 		}
@@ -196,6 +213,22 @@ public class CSVRecord implements DataRecord {
 			l_ret = fields.get(l_ind);
 		}
 		return Optional.ofNullable(l_ret);
+	}
+
+	/**
+	 * Replaces the values of this record by the values from the field source.<br>
+	 * If a field value is not contained in the source the field value is set to the
+	 * <i>NullString</i>.
+	 * 
+	 * @param aSource the field source
+	 */
+	public void put(FieldSource aSource) {
+		fieldNames().forEach(name -> {
+			String l_value = aSource.optionalValue(name).orElse(""); //$NON-NLS-1$
+			int l_ind = hdr.columns.indexOf(name);
+			
+			fields.set(l_ind, l_value);
+		});
 	}
 
 	/**

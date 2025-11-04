@@ -49,10 +49,7 @@ public interface ClassUtil {
 	 * @return the optional URL of the resource.
 	 */
 	static Optional<URL> getResource(String aResource) {
-		ClassLoader l_cl = Thread.currentThread().getContextClassLoader();
-		URL l_ret = l_cl.getResource(aResource);
-
-		return Optional.ofNullable(l_ret);
+		return getResource(ClassUtil.class, aResource);
 	}
 
 	/**

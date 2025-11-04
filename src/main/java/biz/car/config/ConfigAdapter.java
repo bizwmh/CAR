@@ -76,8 +76,12 @@ public class ConfigAdapter implements CAR, Configurable {
 	@Override
 	public void accept(Config aConfig) {
 		conf = aConfig.withFallback(conf);
-		name = getString(NAME, name);
 		logger = loggerFromConfig();
+		String l_name = getString(NAME, null);
+		
+		if (name == null) {
+			name = l_name;
+		}
 	}
 
 	@Override
