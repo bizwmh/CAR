@@ -14,7 +14,6 @@ import biz.car.bundle.MSG;
  * <li>the <code>exec</code> method provides the functionality of the runnable
  * <li>the <code>run</code> method invokes <code>exec</code> but surrounds
  * <code>exec</code> by a try-catch block
- * thread
  * </ul>
  * The <code>dispose</code> method performs the final clean up.
  *
