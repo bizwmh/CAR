@@ -6,7 +6,16 @@
 
 package biz.car;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadFactory;
+
 import biz.car.bundle.MSG;
+import biz.car.config.Configurable;
 
 /**
  * General purpose interface for executing a set of operations:<br>
@@ -14,12 +23,17 @@ import biz.car.bundle.MSG;
  * <li>the <code>exec</code> method provides the functionality of the runnable
  * <li>the <code>run</code> method invokes <code>exec</code> but surrounds
  * <code>exec</code> by a try-catch block
+ * <li>the <code>start</code> methods invoke <code>run</code> but started in its
+ * own thread
  * </ul>
+ * The <code>accept</code> method shall be called before the execution is
+ * started. The <code>accept</code> method provides a configuration to further
+ * initialize the runnable.<br>
  * The <code>dispose</code> method performs the final clean up.
  *
  * @version 2.0.0 06.10.2025 18:13:05
  */
-public interface XRunnable extends Runnable, XLogger {
+public interface XRunnable extends Configurable, Runnable {
 
 	/**
 	 * Releases all allocated resources.<br>
@@ -52,6 +66,29 @@ public interface XRunnable extends Runnable, XLogger {
 	 */
 	default String getName() {
 		return getClass().getSimpleName();
+	}
+
+	/**
+	 * Waits for the completion of a <code>Future</code><br>
+	 * Exceptions are caught, logged and do not terminate the scenario set.
+	 * 
+	 * @param aThread the <code>Future</code> to wait for
+	 */
+	default void join(Future<?> aThread) {
+		try {
+			// wait for the thread to terminate
+			aThread.get();
+		} catch (InterruptedException anEx) {
+			// just terminate
+		} catch (ExecutionException anEx) {
+			Throwable l_ex = anEx.getCause();
+
+			if (!(l_ex instanceof XRuntimeException)) {
+				// log the exception
+				l_ex = exception(l_ex);
+			}
+			throw (XRuntimeException) l_ex;
+		}
 	}
 
 	/**
@@ -98,6 +135,46 @@ public interface XRunnable extends Runnable, XLogger {
 			OnExit.run();
 			dispose();
 		}
+	}
+
+	/**
+	 * Starts the execution of this runnable as a completable future.<br>
+	 * The name of this runnable is used as the name of the resulting thread.
+	 * 
+	 * @return the new <code>CompletableFuture</code>
+	 */
+	default CompletableFuture<Void> start() {
+		CompletableFuture<Void> l_ret = start(getName());
+
+		return l_ret;
+	}
+
+	/**
+	 * Starts the execution of this runnable as a completable future.
+	 * 
+	 * @param anExecutor the executor to use for asynchronous execution
+	 * @return the new <code>CompletableFuture</code>
+	 */
+	default CompletableFuture<Void> start(Executor anExecutor) {
+		CompletableFuture<Void> l_ret = CompletableFuture.runAsync(this, anExecutor);
+
+		return l_ret;
+	}
+
+	/**
+	 * Starts the execution of this runnable as a completable future.
+	 * 
+	 * @param aName the name for the thread
+	 * @return the new <code>CompletableFuture</code>
+	 */
+	default CompletableFuture<Void> start(String aName) {
+		ThreadFactory l_tf = r -> {
+			return new Thread(r, aName);
+		};
+		ExecutorService l_xs = Executors.newCachedThreadPool(l_tf);
+		CompletableFuture<Void> l_ret = start(l_xs);
+
+		return l_ret;
 	}
 
 	/**
