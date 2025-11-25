@@ -101,6 +101,15 @@ public interface XRunnable extends Configurable, Runnable {
 	}
 
 	/**
+	 * Rethrows an exception.
+	 * 
+	 * @param anEx the exception to rethrow
+	 */
+	default void rethrow(XRuntimeException anEx) {
+		throw anEx;
+	}
+
+	/**
 	 * Executes the individual operations of this <code>Runnable</code>.<br>
 	 * This method just invokes the <code>exec</code> method, but wraps it into a
 	 * try-catch block:
@@ -125,7 +134,7 @@ public interface XRunnable extends Configurable, Runnable {
 		} catch (XRuntimeException anEx) {
 			OnExit = OnError;
 
-			throw anEx;
+			rethrow(anEx);
 		} catch (Throwable anEx) {
 			OnExit = OnError;
 
