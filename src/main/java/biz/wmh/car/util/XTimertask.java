@@ -9,7 +9,6 @@ package biz.wmh.car.util;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import biz.wmh.car.SYS;
 import biz.wmh.car.bundle.MSG;
 import biz.wmh.car.config.ConfigAdapter;
 
@@ -95,43 +94,8 @@ public abstract class XTimertask extends ConfigAdapter implements Runnable {
 	 */
 	private long getPeriod() {
 		String l_period = getString(PERIOD, "0"); //$NON-NLS-1$
-		int l_len = l_period.length();
-		long l_ret = 0;
+		long l_ret = Delay.Period.apply(l_period);
 
-		if (l_len > 1) {
-			try {
-				String l_last = l_period.substring(l_len - 1, l_len);
-				long l_factor = 1;
-				int l_ind = "smhd".indexOf(l_last); //$NON-NLS-1$
-
-				switch (l_ind) {
-				case -1:
-					break;
-				case 0:
-					l_factor = 1000;
-					l_period = l_period.substring(0, l_len - 1);
-					break;
-				case 1:
-					l_factor = 60 * 1000;
-					l_period = l_period.substring(0, l_len - 1);
-					break;
-				case 2:
-					l_factor = 60 * 60 * 1000;
-					l_period = l_period.substring(0, l_len - 1);
-					break;
-				case 3:
-					l_factor = 24 * 60 * 60 * 1000;
-					l_period = l_period.substring(0, l_len - 1);
-					break;
-				default:
-					l_factor = 1;
-				}
-				l_ret = Long.valueOf(l_period);
-				l_ret = l_ret * l_factor;
-			} catch (Exception anEx) {
-				throw SYS.LOG.exception(anEx);
-			}
-		}
 		return l_ret;
 	}
 }
