@@ -1,0 +1,36 @@
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.FileAppender;
+import org.slf4j.LoggerFactory;
+
+public class LogbackDynamicConfig {
+
+    public static Logger createDynamicLogger(String name, String fileName) {
+        LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+        
+        // 1. Encoder für das Format erstellen
+        PatternLayoutEncoder ple = new PatternLayoutEncoder();
+        ple.setPattern("%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n");
+        ple.setContext(lc);
+        ple.start();
+
+        // 2. FileAppender erstellen
+        FileAppender<ILoggingEvent> fileAppender = new FileAppender<>();
+        fileAppender.setFile(fileName);
+        fileAppender.setEncoder(ple);
+        fileAppender.setContext(lc);
+        fileAppender.setName("DYNAMIC_FILE_" + name);
+        fileAppender.start();
+
+        // 3. Logger holen und Appender zuweisen
+        Logger logger = (Logger) LoggerFactory.getLogger(name);
+        logger.addAppender(fileAppender);
+        
+        // Optional: Verhindern, dass Logs an den Root-Logger (Konsole) weitergereicht werden
+        logger.setAdditive(false); 
+        
+        return logger;
+    }
+}
