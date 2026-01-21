@@ -9,7 +9,7 @@ package biz.car;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import biz.car.bundle.CONST;
+import biz.car.bundle.VAL;
 import biz.car.config.ACS;
 
 /**
@@ -27,7 +27,7 @@ public class ILogger implements XLogger {
 	public ILogger() {
 		super();
 
-		String l_name = ACS.APP.getString(CONST.systemLogger);
+		String l_name = ACS.APP.getString(VAL.systemLogger);
 		logger = LoggerFactory.getLogger(l_name);
 	}
 
