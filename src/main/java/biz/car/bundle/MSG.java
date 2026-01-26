@@ -20,10 +20,13 @@ public class MSG {
 	public static String EXEC_STARTED;
 	public static String OBJECT_NOT_REGISTERED;
 	public static String OBJECT_UNREGISTERED;
+	public static String PATH_NOT_DIRECTORY;
 	public static String RESOURCE_NOT_FOUND;
 	public static String TIMER_CANCELLED;
 	public static String TIMER_STARTED;
 	public static String TIMER_STOPPED;
+	public static String WATCHER_STARTED;
+	public static String WATCHER_STOPPED;
 
 	// -------------------------------------------------------------------------
 	// Initialize the static fields
