@@ -7,7 +7,13 @@
 package biz.car.io;
 
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.ClosedWatchServiceException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardWatchEventKinds;
+import java.nio.file.WatchKey;
+import java.nio.file.WatchService;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -98,7 +104,6 @@ public class DirectoryWatcher {
 				watchThread.start();
 			} catch (IOException anEx) {
 				SYS.LOG.error(anEx);
-				;
 			}
 			SYS.LOG.info(MSG.WATCHER_STARTED, name);
 		}
@@ -113,12 +118,19 @@ public class DirectoryWatcher {
 		if (running.compareAndSet(true, false)) {
 			try {
 				if (watchThread != null) {
-					watchThread.interrupt();
+					watchService.close();
 				}
-				watchService.close();
-				SYS.LOG.info(MSG.WATCHER_STOPPED, name);
 			} catch (IOException anEx) {
+				watchThread.interrupt();
 			}
+		}
+	}
+
+	private void cleanup() {
+		if (registrations != null) {
+			registrations.clear();
+
+			registrations = null;
 		}
 	}
 
@@ -126,41 +138,37 @@ public class DirectoryWatcher {
 	 * Main watch loop that processes events from the WatchService.
 	 */
 	private void watch() {
-		while (running.get()) {
-			WatchKey l_key;
-			try {
+		try {
+			while (running.get()) {
+				WatchKey l_key;
+				PathListenerPair l_pair;
+
 				l_key = watchService.take();
-			} catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
-				break;
-			} catch (ClosedWatchServiceException e) {
-				break;
-			}
 
-			PathListenerPair l_pair;
-			synchronized (registrations) {
-				l_pair = registrations.get(l_key);
-			}
-
-			if (l_pair == null) {
-				l_key.reset();
-				continue;
-			}
-
-			for (WatchEvent<?> l_event : l_key.pollEvents()) {
-				try {
-					l_pair.listener.onEvent(l_pair.path, l_event);
-				} catch (Exception anEx) {
-					SYS.LOG.error(anEx);
-				}
-			}
-
-			boolean l_valid = l_key.reset();
-			if (!l_valid) {
 				synchronized (registrations) {
-					registrations.remove(l_key);
+					l_pair = registrations.get(l_key);
+				}
+				if (l_pair == null) {
+					l_key.reset();
+					continue;
+				}
+
+				l_pair.listener.onEvent(l_pair.path, l_key.pollEvents());
+
+				boolean l_valid = l_key.reset();
+
+				if (!l_valid) {
+					synchronized (registrations) {
+						registrations.remove(l_key);
+					}
 				}
 			}
+		} catch (InterruptedException anEx) {
+			Thread.currentThread().interrupt();
+		} catch (ClosedWatchServiceException anEx) {
+		} finally {
+			SYS.LOG.info(MSG.WATCHER_STOPPED, name);
+			cleanup();
 		}
 	}
 }
