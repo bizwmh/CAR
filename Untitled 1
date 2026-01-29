@@ -34,3 +34,171 @@ public class LogbackDynamicConfig {
         return logger;
     }
 }
+
+1. Database Bundle:
+
+Wollen Sie API-Bundle + Implementation trennen? (Best Practice)
+Soll H2 im Embedded oder Server-Mode laufen?
+Brauchen Sie JPA/Hibernate oder reicht JDBC?
+Connection-Pool? (z.B. HikariCP)
+
+/* --------------------------------------------------------------------------
+ * Project: CAR OSGi - H2 Console
+ * --------------------------------------------------------------------------
+ * Starts the H2 Web Console as an OSGi service
+ * -------------------------------------------------------------------------- */
+
+package biz.car.osgi.h2.console;
+
+import org.h2.tools.Server;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.ConfigurationPolicy;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.metatype.annotations.AttributeDefinition;
+import org.osgi.service.metatype.annotations.Designate;
+import org.osgi.service.metatype.annotations.ObjectClassDefinition;
+
+/**
+ * OSGi Declarative Service that starts and manages the H2 Web Console.
+ * 
+ * <p>The H2 Console provides a web-based interface for managing H2 databases.
+ * Default URL: http://localhost:8082
+ * 
+ * @version 1.0.0 25.01.2026 15:00:00
+ */
+@Component(
+    immediate = true,
+    configurationPolicy = ConfigurationPolicy.OPTIONAL,
+    service = H2ConsoleService.class
+)
+@Designate(ocd = H2ConsoleService.Config.class)
+public class H2ConsoleService {
+
+    @ObjectClassDefinition(
+        name = "H2 Web Console Configuration",
+        description = "Configuration for the H2 Database Web Console"
+    )
+    public @interface Config {
+        
+        @AttributeDefinition(
+            name = "Enable Console",
+            description = "Enable or disable the H2 Web Console"
+        )
+        boolean enabled() default true;
+        
+        @AttributeDefinition(
+            name = "Console Port",
+            description = "Port number for the H2 Web Console (default: 8082)"
+        )
+        int port() default 8082;
+        
+        @AttributeDefinition(
+            name = "Allow Remote Access",
+            description = "Allow connections from remote hosts (default: false for security)"
+        )
+        boolean allowOthers() default false;
+        
+        @AttributeDefinition(
+            name = "Enable SSL",
+            description = "Use SSL for the web console connection"
+        )
+        boolean useSSL() default false;
+        
+        @AttributeDefinition(
+            name = "Open Browser",
+            description = "Automatically open browser when console starts (disable in server environments)"
+        )
+        boolean openBrowser() default false;
+    }
+    
+    private Server webServer;
+    private Config config;
+    
+    @Activate
+    protected void activate(Config config) throws Exception {
+        this.config = config;
+        
+        if (!config.enabled()) {
+            System.out.println("H2 Web Console is disabled");
+            return;
+        }
+        
+        // Build H2 Console arguments
+        String[] args = buildConsoleArgs(config);
+        
+        // Start the H2 Web Console server
+        webServer = Server.createWebServer(args);
+        webServer.start();
+        
+        String url = webServer.getURL();
+        System.out.println("========================================");
+        System.out.println("H2 Web Console started");
+        System.out.println("URL: " + url);
+        System.out.println("Port: " + config.port());
+        System.out.println("Remote Access: " + (config.allowOthers() ? "Enabled" : "Disabled"));
+        System.out.println("SSL: " + (config.useSSL() ? "Enabled" : "Disabled"));
+        System.out.println("========================================");
+        System.out.println("To connect to your database:");
+        System.out.println("  JDBC URL: jdbc:h2:./workspace/iam");
+        System.out.println("  Driver: org.h2.Driver");
+        System.out.println("  User: sa");
+        System.out.println("  Password: (empty)");
+        System.out.println("========================================");
+    }
+    
+    @Deactivate
+    protected void deactivate() {
+        if (webServer != null && webServer.isRunning(false)) {
+            webServer.stop();
+            System.out.println("H2 Web Console stopped");
+            webServer = null;
+        }
+    }
+    
+    /**
+     * Builds the command-line arguments for H2 Console server.
+     */
+    private String[] buildConsoleArgs(Config config) {
+        java.util.List<String> args = new java.util.ArrayList<>();
+        
+        // Port
+        args.add("-webPort");
+        args.add(String.valueOf(config.port()));
+        
+        // Allow remote access
+        if (config.allowOthers()) {
+            args.add("-webAllowOthers");
+        }
+        
+        // SSL
+        if (config.useSSL()) {
+            args.add("-webSSL");
+        }
+        
+        // Don't open browser automatically in OSGi environment
+        if (!config.openBrowser()) {
+            args.add("-webDaemon");
+        }
+        
+        return args.toArray(new String[0]);
+    }
+    
+    /**
+     * Gets the H2 Console URL.
+     * 
+     * @return the console URL or null if not running
+     */
+    public String getConsoleURL() {
+        return webServer != null ? webServer.getURL() : null;
+    }
+    
+    /**
+     * Checks if the console is running.
+     * 
+     * @return true if console is running
+     */
+    public boolean isRunning() {
+        return webServer != null && webServer.isRunning(false);
+    }
+}
