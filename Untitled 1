@@ -202,3 +202,176 @@ public class H2ConsoleService {
         return webServer != null && webServer.isRunning(false);
     }
 }
+Sie können das mit dem **Maven AntRun Plugin** oder dem **Maven Resources Plugin** machen. In Ihrer pom.xml verwenden Sie bereits das `maven-dependency-plugin` für ein ähnliches Ziel. Hier sind die besten Lösungen:
+
+## Lösung 1: Maven AntRun Plugin (empfohlen für mehrere Ziele)
+
+Fügen Sie dieses Plugin in Ihren `<build><plugins>` Bereich ein:
+
+```xml
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-antrun-plugin</artifactId>
+    <version>3.1.0</version>
+    <executions>
+        <execution>
+            <id>deploy-jar</id>
+            <phase>install</phase>
+            <goals>
+                <goal>run</goal>
+            </goals>
+            <configuration>
+                <target>
+                    <copy file="${project.build.directory}/${project.build.finalName}.jar" 
+                          todir="C:/Pfad/zum/ersten/Ordner"/>
+                    <copy file="${project.build.directory}/${project.build.finalName}.jar" 
+                          todir="C:/Pfad/zum/zweiten/Ordner"/>
+                </target>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
+```
+
+## Lösung 2: Ihr bestehendes dependency-plugin erweitern
+
+Sie können Ihr vorhandenes `maven-dependency-plugin` (Zeilen 107-131) um weitere `<artifactItem>` erweitern:
+
+```xml
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-dependency-plugin</artifactId>
+    <version>3.6.0</version>
+    <executions>
+        <execution>
+            <id>copy-artifact</id>
+            <phase>install</phase>
+            <goals>
+                <goal>copy</goal>
+            </goals>
+            <configuration>
+                <artifactItems>
+                    <!-- Erster Ordner -->
+                    <artifactItem>
+                        <groupId>${project.groupId}</groupId>
+                        <artifactId>${project.artifactId}</artifactId>
+                        <version>${project.version}</version>
+                        <outputDirectory>C:/IDE/WORKSPACE/CAR.OSGi/lib</outputDirectory>
+                    </artifactItem>
+                    <!-- Zweiter Ordner -->
+                    <artifactItem>
+                        <groupId>${project.groupId}</groupId>
+                        <artifactId>${project.artifactId}</artifactId>
+                        <version>${project.version}</version>
+                        <outputDirectory>C:/Pfad/zum/zweiten/Ordner</outputDirectory>
+                    </artifactItem>
+                    <!-- Dritter Ordner -->
+                    <artifactItem>
+                        <groupId>${project.groupId}</groupId>
+                        <artifactId>${project.artifactId}</artifactId>
+                        <version>${project.version}</version>
+                        <outputDirectory>C:/Pfad/zum/dritten/Ordner</outputDirectory>
+                    </artifactItem>
+                </artifactItems>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
+```
+
+## Lösung 3: Properties verwenden (für Flexibilität)
+
+Sie können die Pfade auch in den `<properties>` definieren:
+
+```xml
+<properties>
+    <maven.compiler.release>17</maven.compiler.release>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <target.deploy.path1>C:/IDE/WORKSPACE/CAR.OSGi/lib</target.deploy.path1>
+    <target.deploy.path2>C:/anderer/pfad</target.deploy.path2>
+    <target.deploy.path3>C:/noch/ein/pfad</target.deploy.path3>
+</properties>
+```
+
+Dann im AntRun Plugin:
+```xml
+<copy file="${project.build.directory}/${project.build.finalName}.jar" 
+      todir="${target.deploy.path1}"/>
+<copy file="${project.build.directory}/${project.build.finalName}.jar" 
+      todir="${target.deploy.path2}"/>
+<copy file="${project.build.directory}/${project.build.finalName}.jar" 
+      todir="${target.deploy.path3}"/>
+```
+
+## Meine Empfehlung:
+
+Für Ihren Fall würde ich **Lösung 2** empfehlen (dependency-plugin erweitern), da Sie es bereits verwenden und es konsistent mit Ihrer bestehenden Konfiguration ist.
+
+Welche Lösung passt am besten zu Ihren Anforderungen?
+
+Diese Warnung erscheint, weil Ihre Anwendung (oder eine ihrer Abhängigkeiten) **Incubator-Module** von Java verwendet. Das sind experimentelle Features, die noch nicht finalisiert sind.
+
+## Was sind Incubator-Module?
+
+- `jdk.incubator.vector` - Vector API für SIMD-Operationen
+- `jdk.incubator.foreign` - Foreign Function & Memory API (wurde in Java 19+ zu Panama API)
+
+## Lösungen:
+
+### 1. Warnung unterdrücken (wenn gewollt)
+
+Fügen Sie beim Start der JVM diese Option hinzu:
+
+```bash
+java --add-modules jdk.incubator.vector,jdk.incubator.foreign -jar ihr-app.jar
+```
+
+Oder in Eclipse unter **Run Configurations → Arguments → VM arguments**:
+```
+--add-modules jdk.incubator.vector,jdk.incubator.foreign
+```
+
+### 2. Herausfinden, welche Bibliothek die Module verwendet
+
+Führen Sie aus:
+```bash
+java -Xlog:module=debug -jar ihr-app.jar
+```
+
+Das zeigt, welche Komponente die Incubator-Module lädt.
+
+### 3. Abhängigkeiten aktualisieren
+
+Oft verwenden **ältere Versionen** von Bibliotheken diese Module. Prüfen Sie Ihre Dependencies:
+
+**Häufige Kandidaten:**
+- **Netty** (ältere Versionen)
+- **Apache Arrow**
+- **Panama-basierte Libraries**
+
+In Ihrer pom.xml haben Sie:
+- Typesafe Config
+- SLF4J / Logback
+
+Diese sollten die Incubator-Module **nicht** verwenden. Wahrscheinlich kommt es von einer **transitiven Abhängigkeit** oder aus dem OSGi-Container.
+
+### 4. Java Version prüfen
+
+Sie verwenden Java 17. In neueren Java-Versionen (19+) wurden einige Incubator-Features finalisiert:
+- `jdk.incubator.foreign` → wurde zu `java.lang.foreign` in Java 19+
+
+### 5. Für Eclipse/OSGi spezifisch
+
+Falls Sie ein OSGi-Framework verwenden, prüfen Sie die **Framework-Konfiguration** (`config.ini` oder Start-Parameter), ob dort Incubator-Module aktiviert sind.
+
+## Ist die Warnung schlimm?
+
+**Nein**, die Anwendung läuft trotzdem. Es ist nur eine Warnung, dass Sie experimentelle Features nutzen, die sich in zukünftigen Java-Versionen ändern könnten.
+
+## Empfehlung:
+
+1. Prüfen Sie mit `java -Xlog:module=debug`, welche Komponente die Module lädt
+2. Aktualisieren Sie die entsprechende Bibliothek
+3. Falls es aus dem OSGi-Container kommt, prüfen Sie dessen Konfiguration
+
+Möchten Sie gemeinsam herausfinden, welche Komponente die Warnung verursacht?
