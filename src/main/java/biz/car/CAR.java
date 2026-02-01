@@ -16,29 +16,29 @@ import biz.car.config.ACS;
  * @version 2.0.0 08.01.2026 08:32:08
  */
 public interface CAR {
-	
+
 	/**
-	 * TODO String _conf
+	 * String constant ".conf" to be used as a file extension.
 	 */
 	String _conf = VAL._conf;
 	/**
-	 * TODO String _csv
+	 * String constant ".csv" to be used as a file extension.
 	 */
 	String _csv = VAL._csv;
 	/**
-	 * TODO String _default
+	 * String constant ".default" to be used as a file extension.
 	 */
 	String _default = VAL._default;
 	/**
-	 * TODO String _jar
+	 * String constant ".jar" to be used as a file extension.
 	 */
 	String _jar = VAL._jar;
 	/**
-	 * TODO String _properties
+	 * String constant ".properties" to be used as a file extension.
 	 */
 	String _properties = VAL._properties;
 	/**
-	 * TODO String _sql
+	 * String constant ".sql" to be used as a file extension.
 	 */
 	String _sql = VAL._sql;
 	/**
@@ -46,7 +46,7 @@ public interface CAR {
 	 */
 	String DF_DATE = ACS.APP.getString(VAL.dateFormat);
 	/**
-	 * TODO String DUMMY
+	 * General purpose string constant "DUMMY".
 	 */
 	String DUMMY = VAL.DUMMY;
 	/**
