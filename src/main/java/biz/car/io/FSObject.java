@@ -119,7 +119,8 @@ public interface FSObject extends PrefixedFile {
 	}
 
 	/**
-	 * @return
+	 * @return <code>true</code> if the underlying <code>File</code> instance is
+	 *         hidden.
 	 */
 	default boolean isHidden() {
 		return get().isHidden();
