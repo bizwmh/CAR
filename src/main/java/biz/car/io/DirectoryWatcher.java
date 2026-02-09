@@ -9,17 +9,24 @@ package biz.car.io;
 import java.io.IOException;
 import java.nio.file.ClosedWatchServiceException;
 import java.nio.file.FileSystems;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardWatchEventKinds;
+import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import biz.car.SYS;
+import biz.car.XRuntimeException;
 import biz.car.bundle.MSG;
+import biz.car.util.Delay;
 
 /**
  * Utility class for monitoring directory changes using the WatchService API.
@@ -41,11 +48,12 @@ public class DirectoryWatcher {
 		}
 	}
 
+	private static Object lock = new Object();
+
+	private Map<WatchKey, PathListenerPair> keyToPath;
 	private final String name;
-	private Map<WatchKey, PathListenerPair> registrations;
 	private AtomicBoolean running;
 	private WatchService watchService;
-
 	private Thread watchThread;
 
 	/**
@@ -55,8 +63,10 @@ public class DirectoryWatcher {
 	 */
 	public DirectoryWatcher(String aName) {
 		super();
-		running = new AtomicBoolean(false);
+
 		name = aName;
+		keyToPath = new HashMap<WatchKey, PathListenerPair>();
+		running = new AtomicBoolean(false);
 	}
 
 	/**
@@ -66,27 +76,57 @@ public class DirectoryWatcher {
 	 * 
 	 * @param aPath     the directory path to monitor
 	 * @param aListener the listener to notify when events occur
-	 * @throws IOException              if the path cannot be registered with the
-	 *                                  WatchService
-	 * @throws IllegalArgumentException if the path is not a directory
+	 * @throws XRuntimeException if the path cannot be registered with the
+	 *                           WatchService
 	 */
 	public void register(Path aPath, DirectoryListener aListener) {
 		if (!Files.isDirectory(aPath)) {
-			throw SYS.LOG.exception(MSG.PATH_NOT_DIRECTORY, aPath);
+			throw SYS.LOG.exception(MSG.WATCHER_PATH_NOT_DIRECTORY, aPath);
 		}
 
 		try {
 			WatchKey l_key = aPath.register(
-			      watchService,
+			      getService(),
 			      StandardWatchEventKinds.ENTRY_CREATE,
 			      StandardWatchEventKinds.ENTRY_DELETE,
 			      StandardWatchEventKinds.ENTRY_MODIFY);
 
-			synchronized (registrations) {
-				registrations.put(l_key, new PathListenerPair(aPath, aListener));
+			synchronized (lock) {
+				if (!keyToPath.containsKey(l_key)) {
+					keyToPath.put(l_key, new PathListenerPair(aPath, aListener));
+					SYS.LOG.info(MSG.WATCHER_PATH_REGISTERED, aPath, name);
+				}
 			}
+		} catch (Exception anEx) {
+			throw SYS.LOG.exception(anEx);
+		}
+	}
+
+	/**
+	 * Registers a directory path and all subdirectories with a listener for
+	 * monitoring file system events. The listener will be called whenever CREATE,
+	 * DELETE, or MODIFY events occur in the specified directory.
+	 * 
+	 * @param aPath     the directory path to monitor
+	 * @param aListener the listener to notify when events occur
+	 * @throws XRuntimeException if the path cannot be registered with the
+	 *                           WatchService
+	 */
+	public void registerAll(Path aPath, DirectoryListener aListener) {
+		try {
+			Files.walkFileTree(aPath, new SimpleFileVisitor<Path>() {
+				@Override
+				public FileVisitResult preVisitDirectory(Path aDir, BasicFileAttributes aAttrs)
+				      throws IOException {
+					register(aPath, aListener);
+
+					return FileVisitResult.CONTINUE;
+				}
+			});
 		} catch (IOException anEx) {
 			throw SYS.LOG.exception(anEx);
+		} catch (XRuntimeException anEx) {
+			throw anEx;
 		}
 	}
 
@@ -96,29 +136,23 @@ public class DirectoryWatcher {
 	 */
 	public void start() {
 		if (running.compareAndSet(false, true)) {
-			try {
-				watchService = FileSystems.getDefault().newWatchService();
-				registrations = new HashMap<>();
-				watchThread = new Thread(this::watch, name);
-				watchThread.setDaemon(true);
-				watchThread.start();
-			} catch (IOException anEx) {
-				SYS.LOG.error(anEx);
-			}
+			watchThread = new Thread(this::watch, name);
+			watchThread.setDaemon(true);
+			watchThread.start();
 			SYS.LOG.info(MSG.WATCHER_STARTED, name);
 		}
 	}
 
 	/**
 	 * Stops the watch service and releases all resources.
-	 * 
-	 * @throws IOException if an error occurs while closing the WatchService
 	 */
 	public void stop() {
 		if (running.compareAndSet(true, false)) {
 			try {
 				if (watchThread != null) {
-					watchService.close();
+					if (watchService != null) {
+						watchService.close();
+					}
 				}
 			} catch (IOException anEx) {
 				watchThread.interrupt();
@@ -127,48 +161,61 @@ public class DirectoryWatcher {
 	}
 
 	private void cleanup() {
-		if (registrations != null) {
-			registrations.clear();
-
-			registrations = null;
-		}
+			try {
+				keyToPath.clear();
+				watchService.close();
+			} catch (IOException anEx) {
+			}
 	}
 
 	/**
 	 * Main watch loop that processes events from the WatchService.
 	 */
 	private void watch() {
+		WatchKey l_key;
+		PathListenerPair l_pair;
+		WatchService l_svc = getService();
+
 		try {
 			while (running.get()) {
-				WatchKey l_key;
-				PathListenerPair l_pair;
+				l_key = l_svc.take();
+				
+				// wait some miliiseconds to see if more events occurred
+				Delay.millis(500);
 
-				l_key = watchService.take();
+				// pick up all events
+				List<WatchEvent<?>> l_events = l_key.pollEvents();
 
-				synchronized (registrations) {
-					l_pair = registrations.get(l_key);
+				synchronized (lock) {
+					l_pair = keyToPath.get(l_key);
 				}
 				if (l_pair == null) {
 					l_key.reset();
 					continue;
 				}
-
-				l_pair.listener.onEvent(l_pair.path, l_key.pollEvents());
-
-				boolean l_valid = l_key.reset();
-
-				if (!l_valid) {
-					synchronized (registrations) {
-						registrations.remove(l_key);
-					}
-				}
+				l_pair.listener.onEvent(l_pair.path, l_events);
+				l_key.reset();
 			}
 		} catch (InterruptedException anEx) {
 			Thread.currentThread().interrupt();
 		} catch (ClosedWatchServiceException anEx) {
+		} catch (XRuntimeException anEx) {
+		} catch (Exception anEx) {
+			SYS.LOG.exception(anEx);
 		} finally {
 			SYS.LOG.info(MSG.WATCHER_STOPPED, name);
 			cleanup();
 		}
+	}
+
+	private WatchService getService() {
+		if (watchService == null) {
+			try {
+				watchService = FileSystems.getDefault().newWatchService();
+			} catch (IOException anEx) {
+				throw SYS.LOG.exception(anEx);
+			}
+		}
+		return watchService;
 	}
 }
