@@ -14,8 +14,8 @@
 	<properties>
 		<maven.compiler.release>17</maven.compiler.release>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<target.deploy.path>C:/IDE/WORKSPACE/CAR.OSGi/lib</target.deploy.path>
-		<target.deploy.xenv>C:/IDE/XENV/OASE/lib</target.deploy.xenv>
+		<target.deploy.lib>C:/IDE/WORKSPACE/CAR.OSGi/lib</target.deploy.lib>
+		<target.xenv.lib>C:/IDE/XENV/OASE/lib</target.xenv.lib>
 	</properties>
 
 	<dependencies>
@@ -123,13 +123,13 @@
 									<groupId>${project.groupId}</groupId>
 									<artifactId>${project.artifactId}</artifactId>
 									<version>${project.version}</version>
-									<outputDirectory>${target.deploy.path} </outputDirectory>
+									<outputDirectory>${target.deploy.lib} </outputDirectory>
 								</artifactItem>
 								<artifactItem>
 									<groupId>${project.groupId}</groupId>
 									<artifactId>${project.artifactId}</artifactId>
 									<version>${project.version}</version>
-									<outputDirectory>${target.deploy.xenv} </outputDirectory>
+									<outputDirectory>${target.xenv.lib} </outputDirectory>
 								</artifactItem>
 							</artifactItems>
 						</configuration>

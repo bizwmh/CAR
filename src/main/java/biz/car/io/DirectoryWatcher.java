@@ -118,7 +118,7 @@ public class DirectoryWatcher {
 				@Override
 				public FileVisitResult preVisitDirectory(Path aDir, BasicFileAttributes aAttrs)
 				      throws IOException {
-					register(aPath, aListener);
+					register(aDir, aListener);
 
 					return FileVisitResult.CONTINUE;
 				}
