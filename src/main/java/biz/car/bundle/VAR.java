@@ -15,12 +15,16 @@ import biz.car.config.ACS;
  */
 public class VAR {
 
+	public static String ADDITIVE;
+	public static String APPENDER;
 	public static String EXEC;
+	public static String FILE;
 	public static String INPUT;
 	public static String LOGGER;
 	public static String NAME;
 	public static String OUTPUT;
 	public static String PATH;
+	public static String PATTERN;
 	public static String PERIOD;
 
 	// -------------------------------------------------------------------------

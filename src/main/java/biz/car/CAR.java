@@ -42,6 +42,14 @@ public interface CAR {
 	 */
 	String _sql = VAL._sql;
 	/**
+	 * Key for the additive parameter in logger appenders.
+	 */
+	String ADDITIVE = VAR.ADDITIVE;
+	/**
+	 * Key for the name of a logger appender.
+	 */
+	String APPENDER = VAR.APPENDER;
+	/**
 	 * The default date format
 	 */
 	String DF_DATE = ACS.APP.getString(VAL.dateFormat);
@@ -73,6 +81,10 @@ public interface CAR {
 	 * The key for the PATH runtime option.<br>
 	 */
 	String PATH = VAR.PATH;
+	/**
+	 * Key for the pattern parameter in Logger layouts.
+	 */
+	String PATTERN = VAR.PATTERN;
 	/**
 	 * The key for the PERIOD parameter of a timer task.<br>
 	 */

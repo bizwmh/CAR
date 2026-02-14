@@ -11,6 +11,8 @@ import java.util.Objects;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 
+import biz.car.bundle.ILogger;
+
 /**
  * Runtime features of the JVM system environment.
  *

@@ -4,13 +4,12 @@
  * Use of this software is subject to license terms. All Rights Reserved. 
  * -------------------------------------------------------------------------- */
 
-package biz.car;
+package biz.car.bundle;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import biz.car.bundle.VAL;
-import biz.car.config.ACS;
+import biz.car.XLogger;
 
 /**
  * Base implementation for the <code>XLogger</code> interface.
@@ -20,16 +19,6 @@ import biz.car.config.ACS;
 public class ILogger implements XLogger {
 
 	private Logger logger;
-
-	/**
-	 * Creates a system logger instance.
-	 */
-	public ILogger() {
-		super();
-
-		String l_name = ACS.APP.getString(VAL.systemLogger);
-		logger = LoggerFactory.getLogger(l_name);
-	}
 
 	/**
 	 * Creates a default <code>ILogger</code> instance.
