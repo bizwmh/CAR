@@ -48,13 +48,13 @@ public interface XLoggerFactory {
 		String l_loggerName = l_xc.getString(CAR.LOGGER, ILogger.class.getName());
 		boolean l_additive = l_xc.getBool(CAR.ADDITIVE, false);
 
-		// 1. Encoder für das Format erstellen
+		// 1. Create Encoder for the Pattern Layout
 		PatternLayoutEncoder ple = new PatternLayoutEncoder();
 		ple.setPattern(l_pattern);
 		ple.setContext(lc);
 		ple.start();
 
-		// 2. FileAppender erstellen
+		// 2. Create the FileAppender
 		FileAppender<ILoggingEvent> l_fileAppender = new FileAppender<>();
 		l_fileAppender.setContext(lc);
 		l_fileAppender.setName(l_appenderName);
@@ -62,11 +62,11 @@ public interface XLoggerFactory {
 		l_fileAppender.setEncoder(ple);
 		l_fileAppender.start();
 
-		// 3. Logger holen und Appender zuweisen
+		// 3. Assign Appender to Logger
 		Logger l_logger = (Logger) LoggerFactory.getLogger(l_loggerName);
 		l_logger.addAppender(l_fileAppender);
 
-		// Festlegen, ob Logs an den Root-Logger (Konsole) weitergereicht werden
+		// Determine, if log entries are passed to the root logger
 		l_logger.setAdditive(l_additive);
 
 		return new ILogger(l_logger);
