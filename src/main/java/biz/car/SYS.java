@@ -11,7 +11,8 @@ import java.util.Objects;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 
-import biz.car.bundle.ILogger;
+import biz.car.bundle.VAL;
+import biz.car.config.ACS;
 
 /**
  * Runtime features of the JVM system environment.
@@ -24,12 +25,17 @@ public class SYS {
 	 * The default system logger. <br>
 	 * The name of the logger can be set in the application properties file.
 	 */
-	public static final XLogger LOG = new ILogger();
+	public static final XLogger LOG;
 
 	/**
 	 * The JVM system properties as a <code>Config</code> object.
 	 */
 	public static Config PROPS = ConfigFactory.systemProperties();
+
+	static {
+		String l_name = ACS.APP.getString(VAL.systemLogger);
+		LOG = XLoggerFactory.getLogger(l_name);
+	}
 
 	/**
 	 * All properties from the given configuration file are stored in the Java
@@ -51,7 +57,7 @@ public class SYS {
 
 		PROPS = ConfigFactory.systemProperties();
 	}
-
+	
 	/**
 	 * Creates a <code>SYS</code> instance.
 	 */
