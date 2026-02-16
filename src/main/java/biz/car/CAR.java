@@ -66,6 +66,10 @@ public interface CAR {
 	 */
 	String INPUT = VAR.INPUT;
 	/**
+	 * General purpose constant indicating some kind of failure.
+	 */
+	String KO = VAL.KO;
+	/**
 	 * The key for the LOGGER runtime option.<br>
 	 */
 	String LOGGER = VAR.LOGGER;
@@ -73,6 +77,10 @@ public interface CAR {
 	 * The key for the NAME runtime option.<br>
 	 */
 	String NAME = VAR.NAME;
+	/**
+	 * General purpose constant indicating a successful status.
+	 */
+	String OK = VAL.OK;
 	/**
 	 * Key for the output runtime option
 	 */
