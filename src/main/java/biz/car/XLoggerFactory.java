@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import com.typesafe.config.Config;
 
-import biz.car.bundle.ILogger;
+import biz.car.bundle.CLogger;
 import biz.car.config.ACS;
 import biz.car.config.XConfig;
 import biz.car.io.PrefixedFile;
@@ -24,7 +24,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.FileAppender;
 
 /**
- * Factory for creating an <code>ILogger</code> instance based on a logger
+ * Factory for creating an <code>CLogger</code> instance based on a logger
  * configuration.
  *
  * @version 2.0.0 03.02.2026 07:18:21
@@ -43,9 +43,9 @@ public interface XLoggerFactory {
 		// load logger configuration
 		XConfig l_xc = () -> aConfig;
 		String l_pattern = l_xc.getString(CAR.PATTERN, ACS.APP.getString(CAR.PATTERN));
-		String l_appenderName = l_xc.getString(CAR.APPENDER, ILogger.class.getName());
+		String l_appenderName = l_xc.getString(CAR.APPENDER, CLogger.class.getName());
 		String l_fileName = l_xc.getString(CAR.PATH, defaultFileName());
-		String l_loggerName = l_xc.getString(CAR.LOGGER, ILogger.class.getName());
+		String l_loggerName = l_xc.getString(CAR.LOGGER, CLogger.class.getName());
 		boolean l_additive = l_xc.getBool(CAR.ADDITIVE, false);
 
 		// 1. Create Encoder for the Pattern Layout
@@ -69,7 +69,7 @@ public interface XLoggerFactory {
 		// Determine, if log entries are passed to the root logger
 		l_logger.setAdditive(l_additive);
 
-		return new ILogger(l_logger);
+		return new CLogger(l_logger);
 	}
 
 	/**
@@ -79,11 +79,11 @@ public interface XLoggerFactory {
 	 * @return the <code>XLogger</code> instance
 	 */
 	static XLogger getLogger(String aName) {
-		return new ILogger(aName);
+		return new CLogger(aName);
 	}
 
 	private static String defaultFileName() {
-		File l_file = new File("log", ILogger.class.getSimpleName() + ".log"); //$NON-NLS-1$//$NON-NLS-2$
+		File l_file = new File("log", CLogger.class.getSimpleName() + ".log"); //$NON-NLS-1$//$NON-NLS-2$
 		PrefixedFile l_pf = () -> l_file;
 		File l_prefixed = l_pf.prefix();
 		String l_ret = l_prefixed.getPath();

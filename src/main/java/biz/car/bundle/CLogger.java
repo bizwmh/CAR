@@ -16,27 +16,27 @@ import biz.car.XLogger;
  *
  * @version 2.0.0 16.01.2026 14:58:31
  */
-public class ILogger implements XLogger {
+public class CLogger implements XLogger {
 
 	private Logger logger;
 
 	/**
-	 * Creates a default <code>ILogger</code> instance.
+	 * Creates a default <code>CLogger</code> instance.
 	 * 
 	 * @param aLogger the underlying logger instance
 	 */
-	public ILogger(Logger aLogger) {
+	public CLogger(Logger aLogger) {
 		super();
 
 		logger = aLogger;
 	}
 
 	/**
-	 * Creates a default <code>ILogger</code> instance.
+	 * Creates a default <code>CLogger</code> instance.
 	 * 
 	 * @param aLogger the name of the logger
 	 */
-	public ILogger(String aLogger) {
+	public CLogger(String aLogger) {
 		super();
 
 		logger = LoggerFactory.getLogger(aLogger);
