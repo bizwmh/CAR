@@ -12,6 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.typesafe.config.Config;
+import com.typesafe.config.ConfigValue;
+import com.typesafe.config.ConfigValueFactory;
 
 import biz.car.CAR;
 import biz.car.SYS;
@@ -84,4 +86,22 @@ public class CConfig implements XConfig, XLogger {
 		}
 		return l_ret;
 	}
+
+	/**
+    * Returns a {@code CConfig} based on this one, but with the given path set
+    * to the given value. Does not modify this instance (since it's immutable).
+    * If the path already has a value, that value is replaced.
+    * 
+    * @param aPath
+    *            path expression for the value's new location
+    * @param aValue
+    *            value at the new path
+    * @return the new instance with the new map entry
+    */
+   CConfig withValue(String aPath, String aValue) {
+		ConfigValue l_value = ConfigValueFactory.fromAnyRef(aValue);
+		Config l_conf = conf.withValue(aPath, l_value);
+		
+		return new CConfig(l_conf);
+   }
 }

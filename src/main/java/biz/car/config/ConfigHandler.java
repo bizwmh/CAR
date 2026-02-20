@@ -14,11 +14,9 @@ import java.util.Set;
 import org.slf4j.Logger;
 
 import com.typesafe.config.Config;
-import com.typesafe.config.ConfigFactory;
 import com.typesafe.config.ConfigObject;
 import com.typesafe.config.ConfigOrigin;
 import com.typesafe.config.ConfigValue;
-import com.typesafe.config.ConfigValueFactory;
 import com.typesafe.config.ConfigValueType;
 
 import biz.car.CAR;
@@ -62,17 +60,6 @@ public class ConfigHandler implements XLogger {
 		setLogger(aName);
 		origin(aName, aConfig);
 		log(aConfig);
-	}
-
-	private void setLogger(String aName) {
-		String l_keyPattern = CAR.PATTERN;
-		String l_keyPath = CAR.PATH;
-		ConfigValue l_pattern = ConfigValueFactory.fromAnyRef("%msg%n"); //$NON-NLS-1$
-		ConfigValue l_path = ConfigValueFactory.fromAnyRef(aName);
-		Config l_config = ConfigFactory.empty()
-		      .withValue(l_keyPattern, l_pattern)
-		      .withValue(l_keyPath, l_path);
-		logger = XLoggerFactory.getLogger(l_config).logger();
 	}
 
 	@Override
@@ -163,5 +150,15 @@ public class ConfigHandler implements XLogger {
 			info("urlname = {}", l_url.toString()); //$NON-NLS-1$
 		}
 		info("=".repeat(40)); //$NON-NLS-1$
+	}
+
+	private void setLogger(String aName) {
+		CConfig l_conf = new CConfig();
+		String l_keyPattern = CAR.PATTERN;
+		String l_keyPath = CAR.PATH;
+		l_conf = l_conf
+		      .withValue(l_keyPattern, "%msg%n") //$NON-NLS-1$
+		      .withValue(l_keyPath, aName);
+		logger = XLoggerFactory.getLogger(l_conf.config()).logger();
 	}
 }
