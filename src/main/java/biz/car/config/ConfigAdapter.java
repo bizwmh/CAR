@@ -6,15 +6,9 @@
 
 package biz.car.config;
 
-import java.util.Objects;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.typesafe.config.Config;
 
 import biz.car.CAR;
-import biz.car.SYS;
 
 /**
  * A base implementation of the <code>Configurable</code> interface.<br>
@@ -23,21 +17,16 @@ import biz.car.SYS;
  *
  * @version 2.0.0 08.01.2026 08:32:08
  */
-public class ConfigAdapter implements CAR, Configurable {
+public class ConfigAdapter extends CConfig implements CAR, Configurable {
 
-	private Config conf;
-	private Logger logger;
 	private String name;
 
 	/**
-	 * Creates a default <code>ConfigObject</code> instance with an empty
+	 * Creates a default <code>ConfigAdapter</code> instance with an empty
 	 * configuration.
 	 */
 	public ConfigAdapter() {
 		super();
-
-		conf = EMPTY;
-		logger = SYS.LOG.logger();
 	}
 
 	/**
@@ -48,10 +37,8 @@ public class ConfigAdapter implements CAR, Configurable {
 	 * @param aConfig the underlying configuration object
 	 */
 	public ConfigAdapter(Config aConfig) {
-		super();
+		super(aConfig);
 
-		conf = Objects.requireNonNull(aConfig);
-		logger = loggerFromConfig();
 		name = getString(NAME, null);
 	}
 
@@ -85,28 +72,7 @@ public class ConfigAdapter implements CAR, Configurable {
 	}
 
 	@Override
-	public Config config() {
-		return conf;
-	}
-
-	@Override
 	public String getName() {
 		return name == null ? Configurable.super.getName() : name;
-	}
-
-	@Override
-	public Logger logger() {
-		return logger;
-	}
-
-	private Logger loggerFromConfig() {
-		Logger l_ret = logger;
-
-		if (hasPath(LOGGER)) {
-			l_ret = LoggerFactory.getLogger(getString(LOGGER));
-		} else if (logger == null) {
-			l_ret = SYS.LOG.logger();
-		}
-		return l_ret;
 	}
 }
