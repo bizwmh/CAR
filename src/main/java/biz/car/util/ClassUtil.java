@@ -27,6 +27,17 @@ public interface ClassUtil {
 	ObjectRegistry<Class<?>> Registry = new ObjectRegistry<Class<?>>();
 
 	/**
+    * Returns the name of the package to which the class belongs or an
+    * empty string if the class is in the default package.
+    */
+   public static String getPackageName( final Class<?> aClazz )
+   {
+       String name = aClazz.getName();
+       int l_dot = name.lastIndexOf( '.' );
+       return ( l_dot > 0 ) ? name.substring( 0, l_dot ) : ""; //$NON-NLS-1$
+   }
+
+   /**
 	 * Tries to find the URL of a resource with the given name.
 	 * 
 	 * @param aClass    the class loader of the given class will be used to find the
