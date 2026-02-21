@@ -63,7 +63,7 @@ public class ConfigAdapter extends CConfig implements CAR, Configurable {
 	@Override
 	public void accept(Config aConfig) {
 		conf = aConfig.withFallback(conf);
-		logger = loggerFromConfig();
+		myLogger = loggerFromConfig();
 		String l_name = getString(NAME, null);
 		
 		if (name == null) {

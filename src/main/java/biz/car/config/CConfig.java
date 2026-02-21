@@ -33,7 +33,7 @@ import biz.car.util.ClassUtil;
 public class CConfig implements XConfig, XLogger {
 
 	protected Config conf;
-	protected Logger logger;
+	protected Logger myLogger;
 
 	/**
 	 * Creates a default <code>CConfig</code> instance with an empty configuration
@@ -43,7 +43,9 @@ public class CConfig implements XConfig, XLogger {
 		super();
 
 		conf = defaultConfig();
-		logger = SYS.LOG.logger();
+		myLogger = SYS.LOG.logger();
+		
+		ACS.initialize(this, conf);
 	}
 
 	/**
@@ -56,7 +58,9 @@ public class CConfig implements XConfig, XLogger {
 
 		conf = Objects.requireNonNull(aConfig)
 		      .withFallback(defaultConfig());
-		logger = loggerFromConfig();
+		myLogger = loggerFromConfig();
+		
+		ACS.initialize(this, conf);
 	}
 
 	@Override
@@ -66,7 +70,7 @@ public class CConfig implements XConfig, XLogger {
 
 	@Override
 	public Logger logger() {
-		return logger;
+		return myLogger;
 	}
 
 	/**
@@ -111,11 +115,11 @@ public class CConfig implements XConfig, XLogger {
 	 * @return
 	 */
 	protected Logger loggerFromConfig() {
-		Logger l_ret = logger;
+		Logger l_ret = myLogger;
 
 		if (hasPath(CAR.LOGGER)) {
 			l_ret = LoggerFactory.getLogger(getString(CAR.LOGGER));
-		} else if (logger == null) {
+		} else if (myLogger == null) {
 			l_ret = SYS.LOG.logger();
 		}
 		return l_ret;

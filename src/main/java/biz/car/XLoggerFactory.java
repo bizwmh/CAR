@@ -10,11 +10,7 @@ import java.io.File;
 
 import org.slf4j.LoggerFactory;
 
-import com.typesafe.config.Config;
-
 import biz.car.bundle.CLogger;
-import biz.car.config.ACS;
-import biz.car.config.XConfig;
 import biz.car.io.PrefixedFile;
 
 import ch.qos.logback.classic.Logger;
@@ -34,40 +30,37 @@ public interface XLoggerFactory {
 	/**
 	 * Creates a XLogger instance based on the given configruation.
 	 * 
-	 * @param aConfig the logger configuration
+	 * @param aDTO the logger configuration
 	 * @return the <code>XLogger</code> instance
 	 */
-	public static XLogger getLogger(Config aConfig) {
+	public static XLogger getLogger(LoggerDTO aDTO) {
 		LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
-
-		// load logger configuration
-		XConfig l_xc = () -> aConfig;
-		String l_pattern = l_xc.getString(CAR.PATTERN, ACS.APP.getString(CAR.PATTERN));
-		String l_appenderName = l_xc.getString(CAR.APPENDER, CLogger.class.getName());
-		String l_fileName = l_xc.getString(CAR.PATH, defaultFileName());
-		String l_loggerName = l_xc.getString(CAR.LOGGER, CLogger.class.getName());
-		boolean l_additive = l_xc.getBool(CAR.ADDITIVE, false);
 
 		// 1. Create Encoder for the Pattern Layout
 		PatternLayoutEncoder ple = new PatternLayoutEncoder();
-		ple.setPattern(l_pattern);
+		ple.setPattern(aDTO.pattern);
 		ple.setContext(lc);
 		ple.start();
-
+		// Create the path to the log file
+		File l_file = new File(aDTO.path, aDTO.file);
+		
+		if (aDTO.timestamp) {
+			l_file = prefixedPath(l_file);
+		}
 		// 2. Create the FileAppender
 		FileAppender<ILoggingEvent> l_fileAppender = new FileAppender<>();
 		l_fileAppender.setContext(lc);
-		l_fileAppender.setName(l_appenderName);
-		l_fileAppender.setFile(l_fileName);
+		l_fileAppender.setName(aDTO.appender);
+		l_fileAppender.setFile(l_file.getPath());
 		l_fileAppender.setEncoder(ple);
 		l_fileAppender.start();
 
 		// 3. Assign Appender to Logger
-		Logger l_logger = (Logger) LoggerFactory.getLogger(l_loggerName);
+		Logger l_logger = (Logger) LoggerFactory.getLogger(aDTO.logger);
 		l_logger.addAppender(l_fileAppender);
 
 		// Determine, if log entries are passed to the root logger
-		l_logger.setAdditive(l_additive);
+		l_logger.setAdditive(aDTO.additive);
 
 		return new CLogger(l_logger);
 	}
@@ -75,18 +68,16 @@ public interface XLoggerFactory {
 	/**
 	 * Creates a XLogger instance based on the given name.
 	 * 
-//	 * @param aName the name of the logger
+	 * @param aName the name of the logger
 	 * @return the <code>XLogger</code> instance
 	 */
 	static XLogger getLogger(String aName) {
 		return new CLogger(aName);
 	}
 
-	private static String defaultFileName() {
-		File l_file = new File("log", CLogger.class.getSimpleName() + ".log"); //$NON-NLS-1$//$NON-NLS-2$
-		PrefixedFile l_pf = () -> l_file;
-		File l_prefixed = l_pf.prefix();
-		String l_ret = l_prefixed.getPath();
+	private static File prefixedPath(File aFile) {
+		PrefixedFile l_pf = () -> aFile;
+		File l_ret = l_pf.prefix();
 
 		return l_ret;
 	}

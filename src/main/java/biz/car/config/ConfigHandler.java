@@ -19,7 +19,7 @@ import com.typesafe.config.ConfigOrigin;
 import com.typesafe.config.ConfigValue;
 import com.typesafe.config.ConfigValueType;
 
-import biz.car.CAR;
+import biz.car.LoggerDTO;
 import biz.car.XLogger;
 import biz.car.XLoggerFactory;
 
@@ -153,12 +153,9 @@ public class ConfigHandler implements XLogger {
 	}
 
 	private void setLogger(String aName) {
-		CConfig l_conf = new CConfig();
-		String l_keyPattern = CAR.PATTERN;
-		String l_keyPath = CAR.PATH;
-		l_conf = l_conf
-		      .withValue(l_keyPattern, "%msg%n") //$NON-NLS-1$
-		      .withValue(l_keyPath, aName);
-		logger = XLoggerFactory.getLogger(l_conf.config()).logger();
+		LoggerDTO l_dto = new LoggerDTO();
+		l_dto.pattern = "%msg%n"; //$NON-NLS-1$
+		l_dto.file = aName;
+		logger = XLoggerFactory.getLogger(l_dto).logger();
 	}
 }
