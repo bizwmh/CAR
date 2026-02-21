@@ -6,18 +6,22 @@
 
 package biz.car.config;
 
+import java.net.URL;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
 import com.typesafe.config.ConfigValue;
 import com.typesafe.config.ConfigValueFactory;
 
 import biz.car.CAR;
 import biz.car.SYS;
 import biz.car.XLogger;
+import biz.car.util.ClassUtil;
 
 /**
  * Base implementation of the XLogger interface.<br>
@@ -38,7 +42,7 @@ public class CConfig implements XConfig, XLogger {
 	public CConfig() {
 		super();
 
-		conf = EMPTY;
+		conf = defaultConfig();
 		logger = SYS.LOG.logger();
 	}
 
@@ -50,13 +54,9 @@ public class CConfig implements XConfig, XLogger {
 	public CConfig(Config aConfig) {
 		super();
 
-		conf = Objects.requireNonNull(aConfig);
-
-		if (hasPath(CAR.LOGGER)) {
-			logger = LoggerFactory.getLogger(getString(CAR.LOGGER));
-		} else {
-			logger = SYS.LOG.logger();
-		}
+		conf = Objects.requireNonNull(aConfig)
+		      .withFallback(defaultConfig());
+		logger = loggerFromConfig();
 	}
 
 	@Override
@@ -67,6 +67,40 @@ public class CConfig implements XConfig, XLogger {
 	@Override
 	public Logger logger() {
 		return logger;
+	}
+
+	/**
+	 * Returns a {@code CConfig} based on this one, but with the given path set to
+	 * the given value. Does not modify this instance (since it's immutable). If the
+	 * path already has a value, that value is replaced.
+	 * 
+	 * @param aPath  path expression for the value's new location
+	 * @param aValue value at the new path
+	 * @return the new instance with the new map entry
+	 */
+	public CConfig withValue(String aPath, String aValue) {
+		ConfigValue l_value = ConfigValueFactory.fromAnyRef(aValue);
+		Config l_conf = conf.withValue(aPath, l_value);
+
+		return new CConfig(l_conf);
+	}
+
+	/**
+	 * Assigns a default configuration to this object.<br>
+	 * The default implementation looks up a resource on the classpath with the
+	 * simple class name (followed by '.conf').
+	 * 
+	 * @return the default configuration or <code>XConfig.EMPTY</code>.
+	 */
+	protected Config defaultConfig() {
+		Class<?> l_class = getClass();
+		String l_res = l_class.getSimpleName() + CAR._conf;
+		Optional<URL> l_url = ClassUtil.getResource(l_class, l_res);
+
+		if (l_url.isPresent()) {
+			return ConfigFactory.parseURL(l_url.get());
+		}
+		return XConfig.EMPTY;
 	}
 
 	/**
@@ -86,22 +120,4 @@ public class CConfig implements XConfig, XLogger {
 		}
 		return l_ret;
 	}
-
-	/**
-    * Returns a {@code CConfig} based on this one, but with the given path set
-    * to the given value. Does not modify this instance (since it's immutable).
-    * If the path already has a value, that value is replaced.
-    * 
-    * @param aPath
-    *            path expression for the value's new location
-    * @param aValue
-    *            value at the new path
-    * @return the new instance with the new map entry
-    */
-   CConfig withValue(String aPath, String aValue) {
-		ConfigValue l_value = ConfigValueFactory.fromAnyRef(aValue);
-		Config l_conf = conf.withValue(aPath, l_value);
-		
-		return new CConfig(l_conf);
-   }
 }
