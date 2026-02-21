@@ -16,7 +16,7 @@ public interface SimplePackageName {
 	static String get(Class<?> aClass) {
 		String l_pn = aClass.getPackageName();
 		int l_dot = l_pn.lastIndexOf('.');
-		String l_ret = l_pn.substring(l_dot + 1);
+		String l_ret = l_dot > 0 ? l_pn.substring(l_dot + 1) : l_pn;
 
 		return l_ret;
 	}
