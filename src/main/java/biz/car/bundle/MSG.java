@@ -15,9 +15,12 @@ import biz.car.config.ACS;
  */
 public class MSG {
 
+	public static String DECLARED_FIELD_NOT_FOUND;
 	public static String EXEC_ABENDED;
 	public static String EXEC_ENDED;
 	public static String EXEC_STARTED;
+	public static String FIELD_CANT_BE_SET;
+	public static String FIELD_NOT_USABLE;
 	public static String OBJECT_NOT_REGISTERED;
 	public static String OBJECT_UNREGISTERED;
 	public static String RESOURCE_NOT_FOUND;
