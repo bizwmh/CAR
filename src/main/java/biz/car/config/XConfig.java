@@ -225,16 +225,6 @@ public interface XConfig {
 	}
 
 	/**
-	 * Checks whether a value is present and non-null at the given path.
-	 *
-	 * @param aPath the path to check
-	 * @return <code>true</code> if the path is present
-	 */
-	default boolean hasPath(String aPath) {
-		return config().hasPath(aPath);
-	}
-
-	/**
 	 * Checks whether a configuration object is present.
 	 * 
 	 * @param akey the key to a config object
@@ -250,6 +240,16 @@ public interface XConfig {
 			l_ret = l_vt == OBJECT;
 		}
 		return l_ret;
+	}
+
+	/**
+	 * Checks whether a value is present and non-null at the given path.
+	 *
+	 * @param aPath the path to check
+	 * @return <code>true</code> if the path is present
+	 */
+	default boolean hasPath(String aPath) {
+		return config().hasPath(aPath);
 	}
 
 	/**
