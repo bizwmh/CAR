@@ -44,10 +44,14 @@ public class CSVMapper implements UnaryOperator<CSVRecord> {
 		CSVRecord l_ret = aRecord;
 
 		if (l_ret != null) {
-			List<String> l_list = hdr.columns().stream()
-					.map(field -> fieldMap.get(field))
-					.map(field -> aRecord.optionalValue(field).orElse("")) //$NON-NLS-1$
-					.collect(Collectors.toList());
+			List<String> l_list = new ArrayList<String>();
+			
+			for (String l_field : hdr.columns()) {
+				String l_value = fieldMap.get(l_field);
+				l_value = aRecord.optionalValue(l_value).orElse(""); //$NON-NLS-1$
+				
+				l_list.add(l_value);
+			}
 			l_ret = hdr.Record(l_list);
 		}
 		return l_ret;
@@ -87,12 +91,12 @@ public class CSVMapper implements UnaryOperator<CSVRecord> {
 				switch (l_split.length) {
 				case 1:
 					l_hdr.add(l_split[0]);
-					fieldMap.put(l_split[0], l_split[0]);
+					fieldMap.put(l_split[0].strip(), l_split[0].strip());
 					break;
 
 				case 2:
 					l_hdr.add(l_split[0]);
-					fieldMap.put(l_split[0], l_split[1]);
+					fieldMap.put(l_split[0].strip(), l_split[1].strip());
 					break;
 
 				default:
