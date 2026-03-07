@@ -27,17 +27,16 @@ public interface ClassUtil {
 	ObjectRegistry<Class<?>> Registry = new ObjectRegistry<Class<?>>();
 
 	/**
-    * Returns the name of the package to which the class belongs or an
-    * empty string if the class is in the default package.
-    */
-   public static String getPackageName( final Class<?> aClazz )
-   {
-       String name = aClazz.getName();
-       int l_dot = name.lastIndexOf( '.' );
-       return ( l_dot > 0 ) ? name.substring( 0, l_dot ) : ""; //$NON-NLS-1$
-   }
+	 * Returns the name of the package to which the class belongs or an empty string
+	 * if the class is in the default package.
+	 */
+	public static String getPackageName(final Class<?> aClazz) {
+		String name = aClazz.getName();
+		int l_dot = name.lastIndexOf('.');
+		return (l_dot > 0) ? name.substring(0, l_dot) : ""; //$NON-NLS-1$
+	}
 
-   /**
+	/**
 	 * Tries to find the URL of a resource with the given name.
 	 * 
 	 * @param aClass    the class loader of the given class will be used to find the
@@ -60,7 +59,10 @@ public interface ClassUtil {
 	 * @return the optional URL of the resource.
 	 */
 	static Optional<URL> getResource(String aResource) {
-		return getResource(ClassUtil.class, aResource);
+		ClassLoader l_cl = Thread.currentThread().getContextClassLoader();
+		URL l_ret = l_cl.getResource(aResource);
+
+		return Optional.ofNullable(l_ret);
 	}
 
 	/**
@@ -75,7 +77,8 @@ public interface ClassUtil {
 	static URL getResourceNonNull(Class<?> aClass, String aResource) {
 		Optional<URL> l_url = getResource(aClass, aResource);
 
-		return l_url.orElseThrow(() -> SYS.LOG.exception(MSG.RESOURCE_NOT_FOUND, aResource));
+		return l_url.orElseThrow(() -> SYS.LOG.exception(MSG.RESOURCE_NOT_FOUND,
+				aResource));
 	}
 
 	/**
@@ -87,7 +90,10 @@ public interface ClassUtil {
 	 * @throws XRuntimeException if the resource could not be found
 	 */
 	static URL getResourceNonNull(String aResource) {
-		return getResourceNonNull(ClassUtil.class, aResource);
+		Optional<URL> l_url = getResource(aResource);
+
+		return l_url.orElseThrow(() -> SYS.LOG.exception(MSG.RESOURCE_NOT_FOUND,
+				aResource));
 	}
 
 	/**
@@ -105,6 +111,31 @@ public interface ClassUtil {
 			T l_ret = (T) l_con.newInstance(anArgList);
 
 			return l_ret;
+		} catch (Throwable anEx) {
+			throw SYS.LOG.exception(anEx);
+		}
+	}
+
+	/**
+	 * Creates a new class instance
+	 * 
+	 * @param <T>       the type of the created object instance
+	 * @param aClass    the name of the class holding the constructor
+	 * @param anArgList the constructor arguments
+	 * @return the new object instance
+	 */
+	@SuppressWarnings("unchecked")
+	static <T> T newInstance(String aClass, Object... anArgList) {
+		try {
+			Class<?> l_class = Registry.get(aClass);
+
+			if (l_class != null) {
+				Constructor<?> l_con = getConstructor(l_class, anArgList);
+				T l_ret = (T) l_con.newInstance(anArgList);
+
+				return l_ret;
+			}
+			throw SYS.LOG.exception(MSG.RESOURCE_NOT_FOUND, aClass);
 		} catch (Throwable anEx) {
 			throw SYS.LOG.exception(anEx);
 		}
