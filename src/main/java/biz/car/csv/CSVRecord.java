@@ -41,7 +41,10 @@ public class CSVRecord implements DataRecord {
 
 			delim = CSV.DELIMITER;
 			quote = CSV.QUOTE;
-			columns = List.copyOf(aList);
+			List<String> l_list = aList.stream()
+					.map(f -> f.trim())
+					.toList();
+			columns = List.copyOf(l_list);
 		}
 
 		@Override
