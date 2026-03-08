@@ -6,19 +6,12 @@
 
 package biz.car.csv;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 import java.util.function.UnaryOperator;
-import java.util.stream.Collectors;
 
-import biz.car.SYS;
+import biz.car.util.KeyValuePairs;
 
 /**
  * Converts a source CSV record to a new CSV record with a different header.
@@ -27,86 +20,48 @@ import biz.car.SYS;
  */
 public class CSVMapper implements UnaryOperator<CSVRecord> {
 
-	private Map<String, String> fieldMap;
+	/**
+	 * Factory method for a <code>CSVMapper</code>.<br>
+	 * Key-value pairs are loaded from the given file. The keys defines the header
+	 * columns of the new CSV record created by the <code>apply</code> method.<br>
+	 * The values define the header columns of the source record given as the
+	 * argument of the <code>apply</code> method.
+	 * 
+	 * @param aFile the name of the file holding the key-value pairs.
+	 * @return the new <code>CSVMapper</code> instance
+	 */
+	public static CSVMapper parseFile(String aFile) {
+		CSVMapper l_ret = new CSVMapper();
+		KeyValuePairs l_pairs = KeyValuePairs.parseFile(aFile);
+		l_ret.kv = l_pairs;
+		l_ret.hdr = CSVRecord.Header(l_pairs.keys());
+
+		return l_ret;
+	}
+
 	private CSVHeader hdr;
+	private KeyValuePairs kv;
 
 	/**
 	 * Creates a default <code>CSVMapper</code> instance.
 	 */
 	public CSVMapper() {
 		super();
-
-		fieldMap = new HashMap<String, String>();
 	}
 
 	@Override
 	public CSVRecord apply(CSVRecord aRecord) {
-		CSVRecord l_ret = aRecord;
+		CSVRecord l_ret = Objects.requireNonNull(aRecord);
+		List<String> l_list = new ArrayList<String>();
 
-		if (l_ret != null) {
-			List<String> l_list = new ArrayList<String>();
-			
-			for (String l_field : hdr.columns()) {
-				String l_value = fieldMap.get(l_field);
-				l_value = aRecord.optionalValue(l_value).orElse(""); //$NON-NLS-1$
-				
-				l_list.add(l_value);
-			}
-			l_ret = hdr.Record(l_list);
+		for (String l_field : hdr.columns()) {
+			String l_value = kv.valueOf(l_field);
+			l_value = l_ret.optionalValue(l_value).orElse(""); //$NON-NLS-1$
+
+			l_list.add(l_value);
 		}
+		l_ret = hdr.Record(l_list);
+
 		return l_ret;
 	}
-
-	/**
-	 * Loads a CSV mapping from a file.<br>
-	 * The mapping is a list of key-value pairs. The keys defines the header columns
-	 * of the new CSV record created by the <code>apply</code> method.<br>
-	 * The values define the header columns of the source record given as the
-	 * argument of the <code>apply</code> method.
-	 * 
-	 * @param aName the name of the file to load.
-	 */
-	public void load(String aName) {
-		try {
-			List<String> l_hdr = new ArrayList<String>();
-			File l_file = new File(aName);
-			Path l_path = l_file.toPath();
-			List<String> l_lines = Files.readAllLines(l_path, StandardCharsets.UTF_8);
-			List<String> l_list = l_lines.stream()
-					.map(l -> l.trim())
-					.filter(l -> l.length() > 0 && !l.startsWith("#")) //$NON-NLS-1$
-					.map(l -> {
-						String l_ret = l;
-						int l_ind = l.indexOf("#"); //$NON-NLS-1$
-
-						if (l_ind > 0) {
-							l_ret = l.substring(0, l_ind);
-						}
-						return l_ret;
-					})
-					.collect(Collectors.toList());
-			l_list.forEach(l -> {
-				String[] l_split = l.split("=", 2); //$NON-NLS-1$
-
-				switch (l_split.length) {
-				case 1:
-					l_hdr.add(l_split[0]);
-					fieldMap.put(l_split[0].strip(), l_split[0].strip());
-					break;
-
-				case 2:
-					l_hdr.add(l_split[0]);
-					fieldMap.put(l_split[0].strip(), l_split[1].strip());
-					break;
-
-				default:
-					break;
-				}
-			});
-			hdr = CSVRecord.Header(l_hdr);
-		} catch (IOException anEx) {
-			throw SYS.LOG.exception(anEx);
-		}
-	}
-
 }
