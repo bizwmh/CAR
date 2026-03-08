@@ -200,11 +200,16 @@ public interface XConfig {
 	 * Retrieves the value of a runtime option.
 	 * 
 	 * @param aKey the name of the runtime option
-	 * @return the value found
+	 * @return the value found or the NullString if the value is {@link NullPointerException}
 	 * @throws ConfigException.Missing if aKey is not existing
 	 */
 	default String getString(String aKey) {
-		return config().getString(aKey);
+		String l_ret = config().getString(aKey);
+		
+		if (l_ret == null) {
+			l_ret = ""; //$NON-NLS-1$
+		}
+		return l_ret;
 	}
 
 	/**
@@ -216,10 +221,9 @@ public interface XConfig {
 	 */
 	default String getString(String aKey, String aDefault) {
 		String l_ret = aDefault;
-		Config l_conf = config();
 
-		if (l_conf.hasPath(aKey)) {
-			l_ret = l_conf.getString(aKey);
+		if (hasPath(aKey)) {
+			l_ret = getString(aKey);
 		}
 		return l_ret;
 	}
