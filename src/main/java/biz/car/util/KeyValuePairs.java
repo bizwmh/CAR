@@ -6,11 +6,15 @@
 
 package biz.car.util;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,47 +37,78 @@ public class KeyValuePairs {
 	 */
 	public static KeyValuePairs parseFile(String aFile) {
 		try {
-			KeyValuePairs l_ret = new KeyValuePairs();
 			File l_file = new File(aFile);
 			Path l_path = l_file.toPath();
 			List<String> l_lines = Files.readAllLines(l_path,
 					StandardCharsets.UTF_8);
 
-			List<String> l_list = l_lines.stream()
-					.map(l -> l.strip())
-					.filter(l -> l.length() > 0 && !l.startsWith("#")) //$NON-NLS-1$
-					.map(l -> {
-						String l_line = l;
-						int l_ind = l.indexOf("#"); //$NON-NLS-1$
-
-						if (l_ind > 0) {
-							l_line = l.substring(0, l_ind);
-						}
-						return l_line;
-					})
-					.collect(Collectors.toList());
-			l_list.forEach(l -> {
-				String[] l_split = l.split("=", 2); //$NON-NLS-1$
-
-				switch (l_split.length) {
-				case 1:
-					l_ret.k2v.put(l_split[0].strip(), l_split[0].strip());
-					l_ret.v2k.put(l_split[0].strip(), l_split[0].strip());
-					break;
-
-				case 2:
-					l_ret.k2v.put(l_split[0].strip(), l_split[1].strip());
-					l_ret.v2k.put(l_split[1].strip(), l_split[0].strip());
-					break;
-
-				default:
-					break;
-				}
-			});
-			return l_ret;
+			return buildPairs(l_lines);
 		} catch (IOException anEx) {
 			throw SYS.LOG.exception(anEx);
 		}
+	}
+
+	/**
+	 * Loads the key-value pairs from the given resource.
+	 * 
+	 * @param aFile the name of the resource on the classpath
+	 * @return the new <code>KeyValuepairs</code> instance
+	 */
+	public static KeyValuePairs parseResource(Class<?> aClass, String aResource) {
+		URL l_url = ClassUtil.getResourceNonNull(aClass, aResource);
+
+		try (BufferedReader l_rdr = new BufferedReader(new InputStreamReader(l_url
+				.openStream(),
+				StandardCharsets.UTF_8))) {
+			List<String> l_list = new ArrayList<String>();
+			String l_line = l_rdr.readLine();
+			
+			while (l_line != null) {
+				l_list.add(l_line);
+				
+				l_line = l_rdr.readLine();
+			}
+			return buildPairs(l_list);
+		} catch (Exception anEx) {
+			throw SYS.LOG.exception(anEx);
+		}
+	}
+
+	private static KeyValuePairs buildPairs(List<String> aList) {
+		KeyValuePairs l_ret = new KeyValuePairs();
+		List<String> l_list = aList.stream()
+				.map(l -> l.strip())
+				.filter(l -> l.length() > 0 && !l.startsWith("#")) //$NON-NLS-1$
+				.map(l -> {
+					String l_line = l;
+					int l_ind = l.indexOf("#"); //$NON-NLS-1$
+
+					if (l_ind > 0) {
+						l_line = l.substring(0, l_ind);
+					}
+					return l_line;
+				})
+				.collect(Collectors.toList());
+		
+		l_list.forEach(l -> {
+			String[] l_split = l.split("=", 2); //$NON-NLS-1$
+
+			switch (l_split.length) {
+			case 1:
+				l_ret.k2v.put(l_split[0].strip(), l_split[0].strip());
+				l_ret.v2k.put(l_split[0].strip(), l_split[0].strip());
+				break;
+
+			case 2:
+				l_ret.k2v.put(l_split[0].strip(), l_split[1].strip());
+				l_ret.v2k.put(l_split[1].strip(), l_split[0].strip());
+				break;
+
+			default:
+				break;
+			}
+		});
+		return l_ret;
 	}
 
 	private Map<String, String> k2v = new LinkedHashMap<String, String>();
