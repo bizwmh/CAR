@@ -6,7 +6,8 @@
 
 package biz.car.config;
 
-import static com.typesafe.config.ConfigValueType.*;
+import static com.typesafe.config.ConfigValueType.LIST;
+import static com.typesafe.config.ConfigValueType.OBJECT;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -163,7 +164,7 @@ public interface XConfig {
 	 * @param aKey     the key for the searched value
 	 * @param aDefault the boolean value to return if key for the searched value
 	 *                 does not exist
-	 * @return the value found for the given key
+	 * @return the value found for the given key or the default value
 	 * @throws ConfigException.Missing   if the value for the key does not exist
 	 * @throws ConfigException.WrongType if the value cannot be parsed as a boolean
 	 */
@@ -190,6 +191,26 @@ public interface XConfig {
 	}
 
 	/**
+	 * Provides an integer configuration value.
+	 * 
+	 * @param aKey     the key for the searched value
+	 * @param aDefault the integer value to return if key for the searched value
+	 *                 does not exist
+	 * @return the value found for the given key or the default value
+	 * @throws ConfigException.Missing   if the value for the key does not exist
+	 * @throws ConfigException.WrongType if the value cannot be parsed as an integer
+	 */
+	default int getInt(String aKey, int aDefault) {
+		int l_ret = aDefault;
+		Config l_conf = config();
+
+		if (l_conf.hasPath(aKey)) {
+			l_ret = l_conf.getInt(aKey);
+		}
+		return l_ret;
+	}
+
+	/**
 	 * @return the name for this <code>XConfig</code>
 	 */
 	default String getName() {
@@ -200,12 +221,13 @@ public interface XConfig {
 	 * Retrieves the value of a runtime option.
 	 * 
 	 * @param aKey the name of the runtime option
-	 * @return the value found or the NullString if the value is {@link NullPointerException}
+	 * @return the value found or the NullString if the value is
+	 *         {@link NullPointerException}
 	 * @throws ConfigException.Missing if aKey is not existing
 	 */
 	default String getString(String aKey) {
 		String l_ret = config().getString(aKey);
-		
+
 		if (l_ret == null) {
 			l_ret = ""; //$NON-NLS-1$
 		}
