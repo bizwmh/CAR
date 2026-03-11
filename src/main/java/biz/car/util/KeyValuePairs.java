@@ -14,7 +14,6 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,15 +59,8 @@ public class KeyValuePairs {
 		try (BufferedReader l_rdr = new BufferedReader(new InputStreamReader(l_url
 				.openStream(),
 				StandardCharsets.UTF_8))) {
-			List<String> l_list = new ArrayList<String>();
-			String l_line = l_rdr.readLine();
-			
-			while (l_line != null) {
-				l_list.add(l_line);
-				
-				l_line = l_rdr.readLine();
-			}
-			return buildPairs(l_list);
+
+			return buildPairs(l_rdr.lines().toList());
 		} catch (Exception anEx) {
 			throw SYS.LOG.exception(anEx);
 		}
