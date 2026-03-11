@@ -128,25 +128,6 @@ public interface XConfig {
 	Config config();
 
 	/**
-	 * Retrieves a Configuration value.<br>
-	 * If the value was not found, then this method retries the lookup with the
-	 * path, where underscores have been converted according to the definition of
-	 * the <code>Underscore</code> interface.
-	 * 
-	 * @param aPath the path to the runtime option
-	 * @return the optional value found
-	 */
-	default Optional<String> find(String aPath) {
-		Optional<String> l_path = searchPath(aPath);
-		String l_ret = null;
-
-		if (l_path.isPresent()) {
-			l_ret = getString(l_path.get());
-		}
-		return Optional.ofNullable(l_ret);
-	}
-
-	/**
 	 * Provides a boolean configuration value.
 	 * 
 	 * @param aKey the key for the searched value
