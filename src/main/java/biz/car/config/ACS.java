@@ -44,7 +44,7 @@ public interface ACS {
 	 * name is not a key value then the '_' is replaced by '.' and then used again
 	 * as a key value.
 	 * 
-	 * @param aClass the class where to initialize the static field members
+	 * @param aClass  the class where to initialize the static field members
 	 * @param aConfig the configuration file providing the values
 	 * @return the configuration used to initialize the class
 	 */
@@ -169,21 +169,25 @@ public interface ACS {
 		Field[] l_fields = aClass.getDeclaredFields();
 		XConfig l_xc = () -> aConf;
 
-		Stream.of(l_fields).filter(f -> !f.isSynthetic()).forEach(field -> {
-			try {
-				String l_fname = field.getName();
-				Optional<String> l_path = l_xc.searchPath(l_fname);
+		Stream.of(l_fields)
+			.filter(f -> !f.isSynthetic())
+			.forEach(field -> {
+				try {
+					String l_fname = field.getName();
+					Optional<String> l_path = l_xc.searchPath(l_fname);
 
-				if (l_path.isPresent()) {
-					field.setAccessible(true);
-					Object l_value = aConf.getValue(l_path.get()).unwrapped();
+					if (l_path.isPresent()) {
+						field.setAccessible(true);
+						Object l_value = aConf.getValue(l_path.get())
+							.unwrapped();
 
-					field.set(anObj, l_value);
+						field.set(anObj, l_value);
+					}
+				} catch (IllegalArgumentException
+					| IllegalAccessException anEx) {
+					throw SYS.LOG.exception(anEx);
 				}
-			} catch (IllegalArgumentException | IllegalAccessException anEx) {
-				throw SYS.LOG.exception(anEx);
-			}
-		});
+			});
 	}
 
 	/**

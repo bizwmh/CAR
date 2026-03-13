@@ -43,7 +43,7 @@ public class CConfig implements XConfig, XLogger {
 		super();
 
 		conf = defaultConfig();
-		myLogger = SYS.LOG.logger();
+		myLogger = loggerFromConfig();
 		
 		ACS.initialize(this, conf);
 	}

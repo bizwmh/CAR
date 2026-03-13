@@ -9,6 +9,7 @@ package biz.car.config;
 import static com.typesafe.config.ConfigValueType.LIST;
 import static com.typesafe.config.ConfigValueType.OBJECT;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Dictionary;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigException;
@@ -25,6 +27,7 @@ import com.typesafe.config.ConfigFactory;
 import com.typesafe.config.ConfigValue;
 import com.typesafe.config.ConfigValueType;
 
+import biz.car.SYS;
 import biz.car.util.Underscore;
 
 /**
@@ -75,12 +78,12 @@ public interface XConfig {
 		Map<String, String> l_ret = new HashMap<String, String>();
 
 		aConfig.entrySet()
-				.forEach(entry -> {
-					String l_key = entry.getKey();
-					String l_val = aConfig.getString(l_key);
+			.forEach(entry -> {
+				String l_key = entry.getKey();
+				String l_val = aConfig.getString(l_key);
 
-					l_ret.put(l_key, l_val);
-				});
+				l_ret.put(l_key.replaceAll("\"", ""), l_val);  //$NON-NLS-1$//$NON-NLS-2$
+			});
 		return l_ret;
 	}
 
@@ -278,13 +281,44 @@ public interface XConfig {
 	}
 
 	/**
+	 * Initializes all object fields with a value from this configuration.<br>
+	 * The field name must match an entry key in this configuration.
+	 * 
+	 * @param aObject the object instance to initialize
+	 */
+	default void initialize(Object aObject) {
+		if (aObject != null) {
+			Field[] l_list = aObject.getClass().getDeclaredFields();
+
+			Stream.of(l_list)
+				.filter(field -> !field.isSynthetic())
+				.forEach(field -> {
+					try {
+						String l_fname = field.getName();
+						Optional<String> l_path = searchPath(l_fname);
+
+						if (l_path.isPresent()) {
+							ConfigValue l_cv = config().getObject(l_path.get());
+
+							field.setAccessible(true);
+							field.set(aObject, l_cv.unwrapped());
+						}
+					} catch (IllegalArgumentException
+						| IllegalAccessException anEx) {
+						throw SYS.LOG.exception(anEx);
+					}
+				});
+		}
+	}
+
+	/**
 	 * @return the list of all top level keys in this configuration where
 	 *         <code>hasProperty</code> would return true
 	 */
 	default List<String> propertyKeys() {
 		return config().root().keySet().stream()
-				.filter(key -> hasProperty(key))
-				.collect(Collectors.toList());
+			.filter(key -> hasProperty(key))
+			.collect(Collectors.toList());
 	}
 
 	/**
