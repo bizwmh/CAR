@@ -82,7 +82,7 @@ public interface XConfig {
 				String l_key = entry.getKey();
 				String l_val = aConfig.getString(l_key);
 
-				l_ret.put(l_key.replaceAll("\"", ""), l_val);  //$NON-NLS-1$//$NON-NLS-2$
+				l_ret.put(l_key, l_val);
 			});
 		return l_ret;
 	}
