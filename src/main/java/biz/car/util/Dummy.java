@@ -10,15 +10,15 @@ import com.typesafe.config.Config;
 
 import biz.car.CAR;
 import biz.car.XRunnable;
-import biz.car.config.ConfigAdapter;
+import biz.car.config.CConfig;
 
 /**
  * A runnable, but dummy configuration object.<br>
  * The usage is for testing or monitoring purposes.
  *
- * @version 2.0.0 08.01.2026 08:32:08
+ * @version 2.0.0 18.03.2026 15:39:22
  */
-public class Dummy extends ConfigAdapter implements CAR, XRunnable {
+public class Dummy extends CConfig implements CAR, XRunnable {
 
 	private Long period;
 
@@ -60,7 +60,7 @@ public class Dummy extends ConfigAdapter implements CAR, XRunnable {
 	}
 
 	/**
-	 * @return the configured period of time used 
+	 * @return the configured period of time used
 	 */
 	private long getPeriod() {
 		if (period == null) {

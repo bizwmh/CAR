@@ -10,7 +10,7 @@ import java.io.File;
 import java.io.IOException;
 
 import biz.car.XRunnable;
-import biz.car.config.ConfigAdapter;
+import biz.car.config.CConfig;
 
 /**
  * Processes the records of a CSV file.<br>
@@ -19,7 +19,7 @@ import biz.car.config.ConfigAdapter;
  *
  * @version 2.0.0 08.01.2026 08:32:08
  */
-public class CSVFeeder extends ConfigAdapter implements XRunnable {
+public class CSVFeeder extends CConfig implements XRunnable {
 
 	private CSVHandler myConsumer;
 	private CSVReader rdr;

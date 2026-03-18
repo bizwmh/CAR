@@ -19,33 +19,32 @@ import com.typesafe.config.ConfigValue;
 import com.typesafe.config.ConfigValueFactory;
 
 import biz.car.CAR;
-import biz.car.SYS;
-import biz.car.XLogger;
 import biz.car.util.ClassUtil;
 
 /**
- * Base implementation of the XLogger interface.<br>
- * This class also provides logging based on the logger key in the
- * configuration. Default is the system logger.
+ * Base implementation of the <code>Configurable</code> interface.<br>
+ * The fields of this object are initialized with the values from the associated
+ * configuration. Field names are used as the keys for a configuration entries.
  *
  * @version 1.0.0 20.02.2026 07:56:11
  */
-public class CConfig implements XConfig, XLogger {
+public class CConfig implements CAR, Configurable {
 
-	protected Config conf;
-	protected Logger myLogger;
+	private Config conf;
+	private Logger myLogger;
+	private String name;
 
 	/**
-	 * Creates a default <code>CConfig</code> instance with an empty configuration
-	 * and the system logger.
+	 * Creates a default <code>CConfig</code> instance.<br>
+	 * This instance is initialized with the default configuration.
 	 */
 	public CConfig() {
 		super();
 
 		conf = defaultConfig();
 		myLogger = loggerFromConfig();
-		
-		ACS.initialize(this, conf);
+
+		initialize();
 	}
 
 	/**
@@ -56,16 +55,55 @@ public class CConfig implements XConfig, XLogger {
 	public CConfig(Config aConfig) {
 		super();
 
-		conf = Objects.requireNonNull(aConfig)
-		      .withFallback(defaultConfig());
+		conf = Objects.requireNonNull(aConfig);
 		myLogger = loggerFromConfig();
-		
-		ACS.initialize(this, conf);
+
+		initialize();
+	}
+
+	/**
+	 * Creates a default <code>CConfig</code> instance.
+	 * 
+	 * @param aName the name for the configuration object
+	 */
+	public CConfig(String aName) {
+		this();
+
+		name = aName;
+	}
+
+	/**
+	 * Merges the current configuration with the key-value pairs of the given
+	 * configuration.
+	 * 
+	 * @param aConfig a configuration whose keys should be used as fallback, if the
+	 *                keys are not present in this one
+	 */
+	@Override
+	public void accept(Config aConfig) {
+		String l_name = name;
+		conf = aConfig.withFallback(config());
+		myLogger = loggerFromConfig();
+
+		initialize();
+
+		// the name is immutable
+		if (l_name != null) {
+			name = l_name;
+		}
 	}
 
 	@Override
 	public Config config() {
 		return conf;
+	}
+
+	/**
+	 * Returns the name of this configuration object.<br>
+	 * If a value for the name is not set the simple class name is returned.
+	 */
+	public String getName() {
+		return name == null ? getClass().getSimpleName() : name;
 	}
 
 	@Override
@@ -108,6 +146,14 @@ public class CConfig implements XConfig, XLogger {
 	}
 
 	/**
+	 * Initializes this <code>CConfig</code> with the loaded configuration.<br>
+	 * Called by a constructor.
+	 */
+	protected void initialize() {
+		initialize(this);
+	}
+
+	/**
 	 * Sets the logger to the logger in the configuration, if the configuration
 	 * contains a logger entry. Otherwise the current logger is not changed or set
 	 * to the system logger, if the current logger is <code>null</code>.
@@ -117,10 +163,10 @@ public class CConfig implements XConfig, XLogger {
 	protected Logger loggerFromConfig() {
 		Logger l_ret = myLogger;
 
-		if (hasPath(CAR.LOGGER)) {
-			l_ret = LoggerFactory.getLogger(getString(CAR.LOGGER));
-		} else if (myLogger == null) {
-			l_ret = SYS.LOG.logger();
+		if (hasPath(LOGGER)) {
+			l_ret = LoggerFactory.getLogger(getString(LOGGER));
+		} else if (l_ret == null) {
+			l_ret = LoggerFactory.getLogger(getClass().getSimpleName());
 		}
 		return l_ret;
 	}

@@ -12,7 +12,7 @@ import java.util.TimerTask;
 import com.typesafe.config.Config;
 
 import biz.car.bundle.MSG;
-import biz.car.config.ConfigAdapter;
+import biz.car.config.CConfig;
 
 /**
  * A Java <code>TimerTask</code> controlled by an external configuration file
@@ -38,7 +38,7 @@ import biz.car.config.ConfigAdapter;
  *
  * @version 2.0.0 16.03.2026 19:54:15
  */
-public abstract class XTimertask extends ConfigAdapter implements Runnable {
+public abstract class XTimertask extends CConfig implements Runnable {
 
 	private Timer myTimer;
 
@@ -51,6 +51,7 @@ public abstract class XTimertask extends ConfigAdapter implements Runnable {
 
 	/**
 	 * Creates a default <code>XTimertask</code> instance.
+	 * 
 	 * @param aConfig the underlying configuration
 	 */
 	public XTimertask(Config aConfig) {
@@ -71,14 +72,14 @@ public abstract class XTimertask extends ConfigAdapter implements Runnable {
 		myTimer.schedule(l_task, 0, l_period);
 		info(MSG.TIMER_STARTED, getName());
 	}
-	
+
 	/**
 	 * Cancels this timer task.
 	 */
 	public void stop() {
 		if (myTimer != null) {
 			myTimer.cancel();
-			
+
 			myTimer = null;
 		}
 		info(MSG.TIMER_STOPPED, getName());
