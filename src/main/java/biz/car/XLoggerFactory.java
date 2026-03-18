@@ -34,13 +34,13 @@ public interface XLoggerFactory {
 	 * @return the <code>XLogger</code> instance
 	 */
 	public static XLogger getLogger(LoggerDTO aDTO) {
-		LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+		LoggerContext l_lc = (LoggerContext) LoggerFactory.getILoggerFactory();
 
 		// 1. Create Encoder for the Pattern Layout
-		PatternLayoutEncoder ple = new PatternLayoutEncoder();
-		ple.setPattern(aDTO.pattern);
-		ple.setContext(lc);
-		ple.start();
+		PatternLayoutEncoder l_ple = new PatternLayoutEncoder();
+		l_ple.setPattern(aDTO.pattern);
+		l_ple.setContext(l_lc);
+		l_ple.start();
 		// Create the path to the log file
 		File l_file = new File(aDTO.path, aDTO.file);
 		
@@ -49,10 +49,10 @@ public interface XLoggerFactory {
 		}
 		// 2. Create the FileAppender
 		FileAppender<ILoggingEvent> l_fileAppender = new FileAppender<>();
-		l_fileAppender.setContext(lc);
+		l_fileAppender.setContext(l_lc);
 		l_fileAppender.setName(aDTO.appender);
 		l_fileAppender.setFile(l_file.getPath());
-		l_fileAppender.setEncoder(ple);
+		l_fileAppender.setEncoder(l_ple);
 		l_fileAppender.start();
 
 		// 3. Assign Appender to Logger
