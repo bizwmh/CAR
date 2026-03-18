@@ -9,6 +9,8 @@ package biz.car.util;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import com.typesafe.config.Config;
+
 import biz.car.bundle.MSG;
 import biz.car.config.ConfigAdapter;
 
@@ -34,7 +36,7 @@ import biz.car.config.ConfigAdapter;
  * </dl>
  * </ul>
  *
- * @version 2.0.0 08.01.2026 08:32:08
+ * @version 2.0.0 16.03.2026 19:54:15
  */
 public abstract class XTimertask extends ConfigAdapter implements Runnable {
 
@@ -45,6 +47,14 @@ public abstract class XTimertask extends ConfigAdapter implements Runnable {
 	 */
 	public XTimertask() {
 		super();
+	}
+
+	/**
+	 * Creates a default <code>XTimertask</code> instance.
+	 * @param aConfig the underlying configuration
+	 */
+	public XTimertask(Config aConfig) {
+		super(aConfig);
 	}
 
 	/**
