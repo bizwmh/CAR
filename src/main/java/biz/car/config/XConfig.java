@@ -29,6 +29,7 @@ import com.typesafe.config.ConfigValueType;
 
 import biz.car.SYS;
 import biz.car.util.Underscore;
+import biz.car.util.XField;
 
 /**
  * Provides access to the values of a configuration.
@@ -282,7 +283,8 @@ public interface XConfig {
 
 	/**
 	 * Initializes all object fields with a value from this configuration.<br>
-	 * The field name must match an entry key in this configuration.
+	 * The field name must match an entry key in this configuration.<br>
+	 * Fields of a super class are not initialized.
 	 * 
 	 * @param aObject the object instance to initialize
 	 */
@@ -298,7 +300,7 @@ public interface XConfig {
 						Optional<String> l_path = searchPath(l_fname);
 
 						if (l_path.isPresent()) {
-							ConfigValue l_cv = config().getObject(l_path.get());
+							ConfigValue l_cv = config().getValue(l_path.get());
 
 							field.setAccessible(true);
 							field.set(aObject, l_cv.unwrapped());
@@ -309,6 +311,29 @@ public interface XConfig {
 					}
 				});
 		}
+	}
+
+	/**
+	 * Initializes all object fields with a value from this configuration.<br>
+	 * The field name must match an entry key in this configuration. If a field name
+	 * cannot be found in the given class, the class hierarchy is traversed until a
+	 * field is found or the root of the class hierarchy is reached without finding
+	 * a field.
+	 * 
+	 * @param aObject the object instance to initialize.<br>
+	 *                If <code>null</code> only static fields are initialized.
+	 * @param aClass  the class whose declared fields are used to match a
+	 *                configuration key
+	 */
+	default void initialize(Object aObject, Class<?> aClass) {
+		config().entrySet().forEach(entry -> {
+			String l_key = entry.getKey().replace(".", "_");  //$NON-NLS-1$//$NON-NLS-2$
+			XField l_field = XField.forField(aClass, l_key);
+			
+			if (l_field != null && l_field.isUsable()) {
+				l_field.setValue(aObject, entry.getValue().unwrapped());
+			}
+		});
 	}
 
 	/**

@@ -30,9 +30,10 @@ import biz.car.util.ClassUtil;
  */
 public class CConfig implements CAR, Configurable {
 
+	protected Logger myLogger;
+	protected String name;
+	
 	private Config conf;
-	private Logger myLogger;
-	private String name;
 
 	/**
 	 * Creates a default <code>CConfig</code> instance.<br>
@@ -150,7 +151,7 @@ public class CConfig implements CAR, Configurable {
 	 * Called by a constructor.
 	 */
 	protected void initialize() {
-		initialize(this);
+		initialize(this, getClass());
 	}
 
 	/**
