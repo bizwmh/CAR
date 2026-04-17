@@ -19,9 +19,9 @@ import com.typesafe.config.ConfigOrigin;
 import com.typesafe.config.ConfigValue;
 import com.typesafe.config.ConfigValueType;
 
-import biz.car.LoggerDTO;
 import biz.car.XLogger;
 import biz.car.XLoggerFactory;
+import biz.car.util.LoggerDTO;
 
 /**
  * Analyzes the content of a configuration and writes all found entries to a log

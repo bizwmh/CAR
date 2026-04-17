@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import biz.car.bundle.CLogger;
 import biz.car.io.PrefixedFile;
-
+import biz.car.util.LoggerDTO;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;

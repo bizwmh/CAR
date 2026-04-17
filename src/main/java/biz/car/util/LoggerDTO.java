@@ -4,7 +4,7 @@
  * Use of this software is subject to license terms. All Rights Reserved. 
  * -------------------------------------------------------------------------- */
 
-package biz.car;
+package biz.car.util;
 
 import com.typesafe.config.Config;
 
