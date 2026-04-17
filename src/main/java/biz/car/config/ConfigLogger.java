@@ -29,7 +29,7 @@ import biz.car.util.LoggerDTO;
  *
  * @version 1.0.0 15.02.2026 05:43:28
  */
-public class ConfigHandler implements XLogger {
+public class ConfigLogger implements XLogger {
 
 	private static final String TAB = "\t"; //$NON-NLS-1$
 
@@ -39,7 +39,7 @@ public class ConfigHandler implements XLogger {
 	/**
 	 * Creates a default <code>ConfigHandler</code> instance.
 	 */
-	public ConfigHandler() {
+	public ConfigLogger() {
 		super();
 	}
 
