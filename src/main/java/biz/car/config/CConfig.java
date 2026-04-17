@@ -83,16 +83,10 @@ public class CConfig implements CAR, Configurable {
 	 */
 	@Override
 	public void accept(Config aConfig) {
-		String l_name = name;
 		conf = aConfig.withFallback(config());
 		myLogger = loggerFromConfig();
 
 		initialize();
-
-		// the name is immutable
-		if (l_name != null) {
-			name = l_name;
-		}
 	}
 
 	@Override
