@@ -8,6 +8,8 @@ package biz.car.csv;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * The header of a CSV file.
@@ -60,4 +62,17 @@ public interface CSVHeader {
 	 * @return the new CSV record instance
 	 */
 	CSVRecord Record(Map<String, String> aMap);
+
+	/**
+	 * Converts a CSVRecord to a Map.<br>
+	 * The header fields are used as the keys.
+	 */
+	Function<CSVRecord, Map<String, String>> ToMap = rec -> {
+		Map<String, String> l_ret = rec.fieldNames().stream()
+			.collect(Collectors.toMap(
+				field -> field,
+				field -> rec.optionalValue(field).orElse(""))); //$NON-NLS-1$
+
+		return l_ret;
+	};
 }
