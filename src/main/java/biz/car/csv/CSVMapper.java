@@ -51,16 +51,29 @@ public class CSVMapper implements UnaryOperator<CSVRecord> {
 
 	@Override
 	public CSVRecord apply(CSVRecord aRecord) {
-		CSVRecord l_ret = Objects.requireNonNull(aRecord);
+		CSVRecord l_rec = Objects.requireNonNull(aRecord);
 		List<String> l_list = new ArrayList<String>();
 
 		for (String l_field : hdr.columns()) {
-			String l_value = kv.valueOf(l_field);
-			l_value = l_ret.optionalValue(l_value).orElse(""); //$NON-NLS-1$
+			String l_key = kv.valueOf(l_field);
+			String l_value = valueOf(l_rec, l_key);
 
 			l_list.add(l_value);
 		}
-		l_ret = hdr.Record(l_list);
+		CSVRecord l_ret = hdr.Record(l_list);
+
+		return l_ret;
+	}
+
+	/**
+	 * Looks up a value in the source record.
+	 * 
+	 * @param aRecord the record to inspect
+	 * @param aKey    the key for the field
+	 * @return the value found or the <code>NullString</code>
+	 */
+	protected String valueOf(CSVRecord aRecord, String aKey) {
+		String l_ret = aRecord.optionalValue(aKey).orElse(""); //$NON-NLS-1$
 
 		return l_ret;
 	}
