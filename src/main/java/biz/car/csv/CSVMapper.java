@@ -31,10 +31,8 @@ public class CSVMapper implements UnaryOperator<CSVRecord> {
 	 * @return the new <code>CSVMapper</code> instance
 	 */
 	public static CSVMapper parseFile(String aFile) {
-		CSVMapper l_ret = new CSVMapper();
 		KeyValuePairs l_pairs = KeyValuePairs.parseFile(aFile);
-		l_ret.kv = l_pairs;
-		l_ret.hdr = CSVRecord.Header(l_pairs.keys());
+		CSVMapper l_ret = new CSVMapper(l_pairs);
 
 		return l_ret;
 	}
@@ -47,6 +45,18 @@ public class CSVMapper implements UnaryOperator<CSVRecord> {
 	 */
 	public CSVMapper() {
 		super();
+	}
+
+	/**
+	 * Creates a default <code>CSVMapper</code> instance.
+	 * 
+	 * @param aKV the associated key-value pairs
+	 */
+	public CSVMapper(KeyValuePairs aKV) {
+		super();
+
+		kv = aKV;
+		hdr = CSVRecord.Header(kv.keys());
 	}
 
 	@Override
