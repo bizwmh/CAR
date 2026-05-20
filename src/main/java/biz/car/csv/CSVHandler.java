@@ -6,6 +6,8 @@
 
 package biz.car.csv;
 
+import biz.car.config.Configurable;
+
 /**
  * Processor of a <code>CSVRecord</code>.<br>
  * The CSVFeeder uses a reference to a CSVHandler instance for processing the
@@ -13,7 +15,7 @@ package biz.car.csv;
  *
  * @version 2.0.0 08.01.2026 08:32:08
  */
-public interface CSVHandler {
+public interface CSVHandler extends Configurable {
 
 	/**
 	 * Processes a CSV record

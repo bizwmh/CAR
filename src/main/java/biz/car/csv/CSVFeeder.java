@@ -6,10 +6,13 @@
 
 package biz.car.csv;
 
-import java.io.File;
 import java.io.IOException;
+import java.util.function.UnaryOperator;
+
+import com.typesafe.config.Config;
 
 import biz.car.XRunnable;
+import biz.car.XRuntimeException;
 import biz.car.config.CConfig;
 
 /**
@@ -21,60 +24,88 @@ import biz.car.config.CConfig;
  */
 public class CSVFeeder extends CConfig implements XRunnable {
 
-	private CSVHandler myConsumer;
-	private CSVReader rdr;
+	private UnaryOperator<CSVRecord> mapper = r -> r;
+	private CSVHandler myHandler;
 
 	/**
 	 * Creates a default <code>CSVFeeder</code> instance.
 	 */
-	public CSVFeeder(CSVHandler aConsumer) {
+	public CSVFeeder() {
 		super();
 
-		rdr = new CSVReader();
-		myConsumer = aConsumer;
+		myHandler = new CSVOutput();
+	}
+
+	/**
+	 * Creates a default <code>CSVFeeder</code> instance.
+	 * 
+	 * @param aHandler the associated consumer of CSV records
+	 */
+	public CSVFeeder(CSVHandler aHandler) {
+		super();
+
+		myHandler = aHandler;
+	}
+
+	@Override
+	public void accept(Config aConfig) {
+		super.accept(aConfig);
+
+		myHandler.accept(aConfig);
+
+		if (hasProperty(KV)) {
+			mapper = CSVMapper.parseFile(getString(KV));
+		}
 	}
 
 	@Override
 	public void dispose() {
-		if (rdr != null) {
-			try {
-				rdr.close();
-			} catch (IOException anEx) {
-				myConsumer.onError(anEx);
-			}
-			rdr = null;
-		}
+		// nothing to do
 	}
 
 	@Override
 	public void exec() {
-		try {
-			File l_in = inputFile();
+		try (CSVReader l_rdr = openReader()) {
+			myHandler.onInit();
 
-			myConsumer.onInit();
-			rdr.open(l_in);
-
-			CSVRecord l_rec = rdr.readRecord();
+			CSVRecord l_rec = l_rdr.readRecord();
 
 			while (l_rec != null) {
-				myConsumer.handle(l_rec);
+				feed(l_rec);
 
-				l_rec = rdr.readRecord();
+				l_rec = l_rdr.readRecord();
 			}
-			myConsumer.onExit();
+			myHandler.onExit();
 		} catch (IOException anEx) {
-			myConsumer.onError(anEx);
+			myHandler.onError(anEx);
+			rethrow(new XRuntimeException(anEx));
+		} catch (XRuntimeException anEx) {
+			myHandler.onError(anEx);
+			rethrow(anEx);
 		}
 	}
 
 	/**
-	 * The value of the PATH parameter in the config file is taken as the file name.
-	 * 
-	 * @return a reference to the input CSV file
+	 * Optionally maps the given record via the {@link CSVMapper} (if a {@code KV}
+	 * file was configured) and delegates it to the associated {@link CSVHandler}.
+	 *
+	 * @param aRecord the record to process
 	 */
-	protected File inputFile() {
-		String l_path = getString(PATH);
-		File l_ret = new File(l_path);
+	protected void feed(CSVRecord aRecord) {
+		CSVRecord l_rec = mapper.apply(aRecord);
+
+		myHandler.handle(l_rec);
+	}
+
+	private CSVReader openReader() throws IOException {
+		String l_path = getString(INPUT);
+
+		if (hasConfig(l_path)) {
+			l_path = config().getConfig(l_path).getString(PATH);
+		}
+		CSVReader l_ret = new CSVReader();
+
+		l_ret.open(l_path);
 
 		return l_ret;
 	}

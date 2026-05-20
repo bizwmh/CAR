@@ -8,6 +8,9 @@ package biz.car.util;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 import biz.car.SYS;
@@ -18,6 +21,47 @@ import biz.car.bundle.MSG;
  * Utility methods for handling field injection.
  */
 public class XField implements Consumer<Field> {
+
+	/**
+	 * Returns a map of all declared fields of the given class and its superclasses,
+	 * keyed by field name. The class hierarchy is traversed bottom-up; if the same
+	 * field name appears in both a subclass and a superclass, the subclass field
+	 * takes precedence.
+	 * <p>
+	 * Each entry wraps the field in an {@code XField} instance that reflects the
+	 * field's accessibility and modifier state. Fields that cannot be accessed are
+	 * included in the map but their {@link XField#isUsable()} method will return
+	 * {@code false}.
+	 *
+	 * @param aClass the class whose fields are to be collected; must not be
+	 *               {@code null}
+	 * @return a {@link Map} from field name to {@code XField} instance; never
+	 *         {@code null}
+	 * @throws NullPointerException if {@code aClass} is {@code null}
+	 */
+	public static Map<String, XField> forClass(Class<?> aClass) {
+		Class<?> l_class = Objects.requireNonNull(aClass);
+		Map<String, XField> l_ret = new HashMap<String, XField>();
+
+		while (l_class != null) {
+			Field[] l_fa = l_class.getDeclaredFields();
+			String l_name;
+			XField l_xf;
+
+			for (Field l_field : l_fa) {
+				l_name = l_field.getName();
+
+				if (!l_ret.containsKey(l_name)) {
+					l_xf = new XField(l_class);
+
+					l_xf.accept(l_field);
+					l_ret.put(l_name, l_xf);
+				}
+			}
+			l_class = l_class.getSuperclass();
+		}
+		return l_ret;
+	}
 
 	/**
 	 * Searches the field named {@code aName} in the given {@code aObjectClass}. If
@@ -99,6 +143,37 @@ public class XField implements Consumer<Field> {
 			}
 		}
 		usable = false;
+	}
+
+	/**
+	 * Returns the value of this field for the given object instance.
+	 *
+	 * @param aObject the object from which to read the field value; may be
+	 *                {@code null} for static fields
+	 * @return the value of the field, or {@code null} if the field holds
+	 *         {@code null}
+	 * @throws biz.car.XRuntimeException if the field cannot be read
+	 */
+	public Object getValue(final Object aObject) {
+		try {
+			return field.get(aObject);
+		} catch (Exception anEx) {
+			throw SYS.LOG.exception(anEx);
+		}
+	};
+
+	/**
+	 * Checks if the field in the given object is <code>null</code>.
+	 * 
+	 * @param anObject the object to check
+	 * @return <code>true</code> if this field is <code>null</code>
+	 */
+	public boolean isNull(Object anObject) {
+		try {
+			return field.get(anObject) == null;
+		} catch (IllegalArgumentException | IllegalAccessException anEx) {
+			return false;
+		}
 	}
 
 	/**
@@ -186,7 +261,7 @@ public class XField implements Consumer<Field> {
 		if (l_ret != null) {
 			acceptPrivate = false;
 			acceptPackage &= l_ret.getClassLoader() == theClazzLoader
-			      && thePackage.equals(ClassUtil.getPackageName(l_ret));
+				&& thePackage.equals(ClassUtil.getPackageName(l_ret));
 		}
 		return l_ret;
 	}

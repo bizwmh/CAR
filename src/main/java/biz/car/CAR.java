@@ -70,6 +70,10 @@ public interface CAR {
 	 */
 	String KO = VAL.KO;
 	/**
+	 * Key for the file holding key-value pairs.
+	 */
+	String KV = VAR.KV;
+	/**
 	 * The key for the LOGGER runtime option.<br>
 	 */
 	String LOGGER = VAR.LOGGER;

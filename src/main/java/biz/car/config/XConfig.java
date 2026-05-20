@@ -9,7 +9,6 @@ package biz.car.config;
 import static com.typesafe.config.ConfigValueType.LIST;
 import static com.typesafe.config.ConfigValueType.OBJECT;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Dictionary;
@@ -19,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigException;
@@ -27,7 +25,6 @@ import com.typesafe.config.ConfigFactory;
 import com.typesafe.config.ConfigValue;
 import com.typesafe.config.ConfigValueType;
 
-import biz.car.SYS;
 import biz.car.util.Underscore;
 import biz.car.util.XField;
 
@@ -289,28 +286,7 @@ public interface XConfig {
 	 * @param aObject the object instance to initialize
 	 */
 	default void initialize(Object aObject) {
-		if (aObject != null) {
-			Field[] l_list = aObject.getClass().getDeclaredFields();
-
-			Stream.of(l_list)
-				.filter(field -> !field.isSynthetic())
-				.forEach(field -> {
-					try {
-						String l_fname = field.getName();
-						Optional<String> l_path = searchPath(l_fname);
-
-						if (l_path.isPresent()) {
-							ConfigValue l_cv = config().getValue(l_path.get());
-
-							field.setAccessible(true);
-							field.set(aObject, l_cv.unwrapped());
-						}
-					} catch (IllegalArgumentException
-						| IllegalAccessException anEx) {
-						throw SYS.LOG.exception(anEx);
-					}
-				});
-		}
+		initialize(aObject, aObject.getClass());
 	}
 
 	/**
@@ -326,10 +302,12 @@ public interface XConfig {
 	 *                configuration key
 	 */
 	default void initialize(Object aObject, Class<?> aClass) {
+		Map<String, XField> l_fm = XField.forClass(aClass);
+		
 		config().entrySet().forEach(entry -> {
-			String l_key = entry.getKey().replace(".", "_");  //$NON-NLS-1$//$NON-NLS-2$
-			XField l_field = XField.forField(aClass, l_key);
-			
+			String l_key = entry.getKey().replace(".", "_"); //$NON-NLS-1$//$NON-NLS-2$
+			XField l_field = l_fm.get(l_key);
+
 			if (l_field != null && l_field.isUsable()) {
 				l_field.setValue(aObject, entry.getValue().unwrapped());
 			}
@@ -349,7 +327,7 @@ public interface XConfig {
 	/**
 	 * Perform a 2-phase check on the existence of the given path to a configuration
 	 * entry. If the path could not be found as it is, then the path is converted
-	 * according the rules of the Underscore interface and the search is repeated
+	 * according to the rules of the Underscore interface and the search is repeated
 	 * with that path.
 	 * 
 	 * @param aPath the path to look up
