@@ -74,6 +74,10 @@ public class CSVOutput extends CConfig implements CAR, CSVHandler {
 		wrt = new CSVWriter();
 		String l_out = getString(OUTPUT);
 
+		if (hasConfig(l_out)) {
+			l_out = config().getConfig(l_out).getString(PATH);
+		}
+
 		try {
 			wrt.open(l_out);
 		} catch (IOException anEx) {
