@@ -18,6 +18,13 @@ import biz.car.config.Configurable;
 public interface CSVHandler extends Configurable {
 
 	/**
+	 * Releases all allocated resources.<br>
+	 * When this method has finished this <code>CSVHandler</code> instance shall no
+	 * longer be usable.
+	 */
+	void dispose();
+
+	/**
 	 * Processes a CSV record
 	 * 
 	 * @param aRecord the record to process
@@ -26,10 +33,13 @@ public interface CSVHandler extends Configurable {
 
 	/**
 	 * Called when an exception occurred during the input process.
+	 * By default the exception message is logged.
 	 * 
 	 * @param anEx the exception thrown by the <code>CSVFeeder</code>.
 	 */
-	void onError(Exception anEx);
+	default void onError(Exception anEx) {
+		error(anEx);
+	}
 
 	/**
 	 * Called once after the CSVFeeder has finished the processing the input

@@ -60,7 +60,11 @@ public class CSVFeeder extends CConfig implements XRunnable {
 
 	@Override
 	public void dispose() {
-		// nothing to do
+		if (myHandler != null) {
+			myHandler.dispose();
+			
+			myHandler = null;
+		}
 	}
 
 	@Override
