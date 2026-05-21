@@ -124,24 +124,20 @@ public interface XRunnable extends Configurable, Runnable {
 	 * @throws XRuntimeException if an error occurs
 	 */
 	default void run() {
-		Runnable OnEnd = () -> endMessage();
-		Runnable OnError = () -> errorMessage();
-		Runnable OnExit = OnEnd;
-
 		try {
 			startMessage();
 			exec();
+			endMessage();
 		} catch (XRuntimeException anEx) {
-			OnExit = OnError;
+			errorMessage();
 
 			rethrow(anEx);
 		} catch (Throwable anEx) {
-			OnExit = OnError;
+			XRuntimeException l_ex = exception(anEx);
 
 			onAbend(anEx);
-			throw exception(anEx);
+			rethrow(l_ex);
 		} finally {
-			OnExit.run();
 			dispose();
 		}
 	}
