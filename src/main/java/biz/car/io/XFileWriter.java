@@ -11,6 +11,7 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -20,6 +21,7 @@ import java.nio.charset.StandardCharsets;
  */
 public class XFileWriter implements Closeable {
 
+	private Charset chars;
 	private int count;
 	private String name;
 	private BufferedWriter writer;
@@ -30,6 +32,8 @@ public class XFileWriter implements Closeable {
 	 */
 	public XFileWriter() {
 		super();
+		
+		chars = StandardCharsets.UTF_8;
 	}
 
 	/**
@@ -92,7 +96,7 @@ public class XFileWriter implements Closeable {
 	public void open(File aFile, boolean bAppend) throws IOException {
 		if (writer == null) {
 			count = 0;
-			FileWriter l_fw = new FileWriter(aFile, StandardCharsets.UTF_8, bAppend);
+			FileWriter l_fw = new FileWriter(aFile, chars, bAppend);
 			writer = new BufferedWriter(l_fw);
 			name = aFile.getPath();
 		}
@@ -131,6 +135,15 @@ public class XFileWriter implements Closeable {
 	 */
 	public void resetRecordCount() {
 		count = 0;
+	}
+
+	/**
+	 * Assigns a character set to use for writing the file
+	 * 
+	 * @param aSet the character set
+	 */
+	public void setCharacterSet(Charset aSet) {
+		chars = aSet;
 	}
 
 	/**

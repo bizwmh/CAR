@@ -13,6 +13,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -23,6 +24,7 @@ import java.nio.charset.StandardCharsets;
  */
 public class XFileReader implements Closeable {
 
+	private Charset chars;
 	private int count;
 	private String name;
 	private BufferedReader rdr;
@@ -32,6 +34,8 @@ public class XFileReader implements Closeable {
 	 */
 	public XFileReader() {
 		super();
+		
+		chars = StandardCharsets.UTF_8;
 	}
 
 	/**
@@ -73,7 +77,7 @@ public class XFileReader implements Closeable {
 	 */
 	public void open(File aFile) throws IOException {
 		if (rdr == null) {
-			FileReader l_reader = new FileReader(aFile, StandardCharsets.UTF_8);
+			FileReader l_reader = new FileReader(aFile, chars);
 			rdr = new BufferedReader(l_reader);
 			name = aFile.getPath();
 			count = 0;
@@ -139,5 +143,14 @@ public class XFileReader implements Closeable {
 	 */
 	public void resetRecordCount() {
 		count = 0;
+	}
+
+	/**
+	 * Assigns a character set to use for reading the file
+	 * 
+	 * @param aSet the character set
+	 */
+	public void setCharacterSet(Charset aSet) {
+		chars = aSet;
 	}
 }
