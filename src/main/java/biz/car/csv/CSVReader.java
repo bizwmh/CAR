@@ -57,19 +57,20 @@ public class CSVReader extends XFileReader {
 		myParser = new CSVParser(delim);
 		List<String> l_hdr = readFields();
 		hdr = CSVRecord.Header(l_hdr).Delimiter(delim);
-		
+
+		l_hdr.set(0, l_hdr.get(0).replace(CSV.BOM, "")); //$NON-NLS-1$
 		resetRecordCount();
 	}
 
 	/**
 	 * Opens the CSV source specified by the given runtime parameters.
 	 * 
-	 * @param aFrist the initial part of the path to the input file
+	 * @param aFirst the initial part of the path to the input file
 	 * @param aMore  additional parameters to join the file path
 	 * @throws IOException if the CSV source could not be opened
 	 */
-	public void open(String aFrist, String... aMore) throws IOException {
-		Path l_path = Paths.get(aFrist, aMore);
+	public void open(String aFirst, String... aMore) throws IOException {
+		Path l_path = Paths.get(aFirst, aMore);
 		File l_file = l_path.toFile();
 
 		open(l_file);
@@ -101,7 +102,7 @@ public class CSVReader extends XFileReader {
 	public void setDelimiter(String aDelim) {
 		if (myParser == null) {
 			delim = Objects.requireNonNull(aDelim);
-			
+
 			return;
 		}
 		throw new IllegalStateException();

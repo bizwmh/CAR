@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
  */
 public class CSV {
 
+	public static final String BOM;
 	public static final String DELIMITER;
 	public static final String DQ;
 	public static final Pattern DQ_PATTERN;
@@ -28,6 +29,7 @@ public class CSV {
 	// Initialize the static fields
 	// -------------------------------------------------------------------------
 	static {
+		BOM = "\uFEFF"; //$NON-NLS-1$
 		DELIMITER = ";"; //$NON-NLS-1$
 		DQ = "\""; //$NON-NLS-1$
 		DQ2 = "\"\""; //$NON-NLS-1$
