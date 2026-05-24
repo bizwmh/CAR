@@ -24,6 +24,7 @@ public class VAL {
 	public static String dateFormat;
 	public static String DUMMY;
 	public static String KO;
+	public static String KV;
 	public static String OK;
 	public static String systemLogger;
 	public static String timestampFormat;

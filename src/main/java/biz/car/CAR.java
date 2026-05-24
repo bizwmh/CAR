@@ -72,7 +72,7 @@ public interface CAR {
 	/**
 	 * Key for the file holding key-value pairs.
 	 */
-	String KV = VAR.KV;
+	String KV = VAL.KV;
 	/**
 	 * The key for the LOGGER runtime option.<br>
 	 */

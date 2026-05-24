@@ -20,7 +20,6 @@ public class VAR {
 	public static String EXEC;
 	public static String FILE;
 	public static String INPUT;
-	public static String KV;
 	public static String LOGGER;
 	public static String NAME;
 	public static String OUTPUT;

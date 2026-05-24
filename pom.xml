@@ -16,7 +16,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<target.deploy.lib>C:/IDE/WORKSPACE/CAR.OSGi/lib</target.deploy.lib>
 		<target.xenv.lib>C:/IDE/XENV/OASE/lib</target.xenv.lib>
-		<target.elster.lib>C:/Users/it-lo/OneDrive/Einkommensteuer/OASE/lib</target.elster.lib>
+		<target.elster.lib>C:/Users/it-lo/OneDrive/Documents/Einkommensteuer/OASE/lib</target.elster.lib>
 	</properties>
 
 	<dependencies>
