@@ -7,6 +7,9 @@
 package biz.car.csv;
 
 import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Paths;
+import java.util.Optional;
 import java.util.function.UnaryOperator;
 
 import com.typesafe.config.Config;
@@ -14,6 +17,8 @@ import com.typesafe.config.Config;
 import biz.car.XRunnable;
 import biz.car.XRuntimeException;
 import biz.car.config.CConfig;
+import biz.car.util.ClassUtil;
+import biz.car.util.KeyValuePairs;
 
 /**
  * Processes the records of a CSV file.<br>
@@ -54,7 +59,19 @@ public class CSVFeeder extends CConfig implements XRunnable {
 		myHandler.accept(aConfig);
 
 		if (hasProperty(KV)) {
-			mapper = CSVMapper.parseFile(getString(KV));
+			String l_kv = getString(KV);
+			Class<?> l_class = getClass();
+			
+			Optional<URL> l_url = ClassUtil.getResource(l_class, l_kv);
+			
+			if (l_url.isPresent()) {
+				KeyValuePairs l_kvPairs = KeyValuePairs.parseResource(l_class, l_kv);
+				mapper = new CSVMapper(l_kvPairs);
+			} else {
+				if (Paths.get(l_kv).toFile().isFile()) {
+					mapper = CSVMapper.parseFile(getString(KV));
+				}
+			}
 		}
 	}
 
