@@ -27,6 +27,24 @@ public interface ClassUtil {
 	ObjectRegistry<Class<?>> Registry = new ObjectRegistry<Class<?>>();
 
 	/**
+	 * Looks up a class constructor.<br>
+	 * 
+	 * @param aClass the class where to look up the constructor
+	 * @param anArg  the arguments building the signature of the constructor
+	 * @return the constructor found
+	 * @throws NoSuchMethodException if the constructor was not found
+	 * @throws SecurityException     see <code>Class.getConstructor</code>
+	 */
+	public static Constructor<?> getConstructor(Class<?> aClass,
+			Object... anArg) throws NoSuchMethodException, SecurityException {
+
+		Class<?>[] l_args = typeOf(anArg);
+		Constructor<?> l_ret = aClass.getConstructor(l_args);
+
+		return l_ret;
+	}
+
+	/**
 	 * Returns the name of the package to which the class belongs or an empty string
 	 * if the class is in the default package.
 	 */
@@ -117,6 +135,20 @@ public interface ClassUtil {
 	}
 
 	/**
+	 * Instance fields will be initialized by the values found in the given
+	 * configuration file. This is done for fields where the field name matches the
+	 * entry in the configuration file.<br>
+	 * If the field name contains the '_' character (not as first) and this field
+	 * name is not a key value then the '_' is replaced by '.' and then used again
+	 * as a key value.
+	 * 
+	 * @param aClass  the class to use for the initialization
+	 * @param aConfig the configuration to use for the initialization
+	 * @param anObj   the class instance whose fields to initialize<br>
+	 * 
+	 */
+
+	/**
 	 * Creates a new class instance
 	 * 
 	 * @param <T>       the type of the created object instance
@@ -139,38 +171,6 @@ public interface ClassUtil {
 		} catch (Throwable anEx) {
 			throw SYS.LOG.exception(anEx);
 		}
-	}
-
-	/**
-	 * Instance fields will be initialized by the values found in the given
-	 * configuration file. This is done for fields where the field name matches the
-	 * entry in the configuration file.<br>
-	 * If the field name contains the '_' character (not as first) and this field
-	 * name is not a key value then the '_' is replaced by '.' and then used again
-	 * as a key value.
-	 * 
-	 * @param aClass  the class to use for the initialization
-	 * @param aConfig the configuration to use for the initialization
-	 * @param anObj   the class instance whose fields to initialize<br>
-	 * 
-	 */
-
-	/**
-	 * Looks up a class constructor.<br>
-	 * 
-	 * @param aClass the class where to look up the constructor
-	 * @param anArg  the arguments building the signature of the constructor
-	 * @return the constructor found
-	 * @throws NoSuchMethodException if the constructor was not found
-	 * @throws SecurityException     see <code>Class.getConstructor</code>
-	 */
-	private static Constructor<?> getConstructor(Class<?> aClass,
-			Object... anArg) throws NoSuchMethodException, SecurityException {
-
-		Class<?>[] l_args = typeOf(anArg);
-		Constructor<?> l_ret = aClass.getConstructor(l_args);
-
-		return l_ret;
 	}
 
 	/**
