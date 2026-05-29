@@ -6,6 +6,7 @@
 
 package biz.car;
 
+import biz.car.bundle.MSG;
 import biz.car.bundle.VAL;
 import biz.car.bundle.VAR;
 import biz.car.config.ACS;
@@ -16,11 +17,12 @@ import biz.car.config.ACS;
  * @version 2.0.0 08.01.2026 08:32:08
  */
 public interface CAR {
-
+	
 	/**
 	 * String constant ".conf" to be used as a file extension.
 	 */
 	String _conf = VAL._conf;
+
 	/**
 	 * String constant ".csv" to be used as a file extension.
 	 */
@@ -101,4 +103,8 @@ public interface CAR {
 	 * The key for the PERIOD parameter of a timer task.<br>
 	 */
 	String PERIOD = VAR.PERIOD;
+	/**
+	 * Message pattern to indicate that a resource was not found.
+	 */
+	String RESOURCE_NOT_FOUND = MSG.RESOURCE_NOT_FOUND;
 }
