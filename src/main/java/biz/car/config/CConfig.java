@@ -6,8 +6,6 @@
 
 package biz.car.config;
 
-import java.util.Objects;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,11 +49,9 @@ public class CConfig implements CAR, Configurable {
 	public CConfig(Config aConfig) {
 		super();
 
-		conf = Objects.requireNonNull(aConfig);
-		conf = conf.withFallback(defaultConfig());
-		myLogger = loggerFromConfig();
+		conf = defaultConfig();
 
-		initialize();
+		accept(aConfig);
 	}
 
 	/**
