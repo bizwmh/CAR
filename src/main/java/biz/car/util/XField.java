@@ -23,6 +23,29 @@ import biz.car.bundle.MSG;
 public class XField implements Consumer<Field> {
 
 	/**
+	 * Returns a map of all fields declared directly in the given class, keyed by
+	 * field name. Unlike {@link #forClass(Class)}, the class hierarchy is not
+	 * traversed — only the fields declared in {@code aClass} itself are included.
+	 *
+	 * @param aClass the class whose declared fields are to be collected
+	 * @return a {@link Map} from field name to {@code XField} instance; never
+	 *         {@code null}
+	 */
+	public static Map<String, XField> fieldMap(Class<?> aClass) {
+		Field[] l_fields = aClass.getDeclaredFields();
+		Map<String, XField> l_ret = new HashMap<String, XField>();
+
+		for (Field l_field : l_fields) {
+			String l_key = l_field.getName();
+			XField l_value = new XField(aClass);
+
+			l_value.accept(l_field);
+			l_ret.put(l_key, l_value);
+		}
+		return l_ret;
+	}
+
+	/**
 	 * Returns a map of all declared fields of the given class and its superclasses,
 	 * keyed by field name. The class hierarchy is traversed bottom-up; if the same
 	 * field name appears in both a subclass and a superclass, the subclass field
