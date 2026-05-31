@@ -6,14 +6,19 @@
 
 package biz.car.config;
 
+import java.net.URL;
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
 import com.typesafe.config.ConfigValue;
 import com.typesafe.config.ConfigValueFactory;
 
 import biz.car.CAR;
+import biz.car.util.ClassUtil;
 
 /**
  * Base implementation of the <code>Configurable</code> interface.<br>
@@ -129,9 +134,17 @@ public class CConfig implements CAR, Configurable {
 	protected Config defaultConfig() {
 		Class<?> l_class = getClass();
 		String l_name = l_class.getSimpleName() + CAR._conf;
-		Config l_ret = ACS.parseResource(l_class, l_name).orElse(EMPTY);
-
-		return l_ret;
+		Optional<URL> l_res = ClassUtil.getResource(l_name);
+		
+		if (!l_res.isPresent()) {
+			l_res = ClassUtil.getResource(l_class, l_name);
+		}
+		Config l_ret = EMPTY;
+		
+		if (l_res.isPresent()) {
+			l_ret = ConfigFactory.parseURL(l_res.get());
+		}
+		return l_ret.resolve();
 	}
 
 	/**
