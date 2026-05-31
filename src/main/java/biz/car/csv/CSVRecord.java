@@ -258,7 +258,7 @@ public class CSVRecord implements DataRecord {
 
 	@Override
 	public String toString() {
-		return hdr.quote + String.join(hdr.splitter.get(), fields) + hdr.quote;
+		return String.join(hdr.splitter.get(), fields);
 	}
 
 	/**
