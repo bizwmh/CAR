@@ -39,7 +39,7 @@ public class KeyValuePairs {
 			File l_file = new File(aFile);
 			Path l_path = l_file.toPath();
 			List<String> l_lines = Files.readAllLines(l_path,
-					StandardCharsets.UTF_8);
+				StandardCharsets.UTF_8);
 
 			return buildPairs(l_lines);
 		} catch (IOException anEx) {
@@ -50,15 +50,35 @@ public class KeyValuePairs {
 	/**
 	 * Loads the key-value pairs from the given resource.
 	 * 
-	 * @param aFile the name of the resource on the classpath
+	 * @param aClass    the class to use for loading the resource
+	 * @param aResource the name of the resource on the classpath
 	 * @return the new <code>KeyValuepairs</code> instance
 	 */
 	public static KeyValuePairs parseResource(Class<?> aClass, String aResource) {
 		URL l_url = ClassUtil.getResourceNonNull(aClass, aResource);
 
 		try (BufferedReader l_rdr = new BufferedReader(new InputStreamReader(l_url
-				.openStream(),
-				StandardCharsets.UTF_8))) {
+			.openStream(),
+			StandardCharsets.UTF_8))) {
+
+			return buildPairs(l_rdr.lines().toList());
+		} catch (Exception anEx) {
+			throw SYS.LOG.exception(anEx);
+		}
+	}
+
+	/**
+	 * Loads the key-value pairs from the given resource.
+	 * 
+	 * @param aResource the name of the resource on the classpath
+	 * @return the new <code>KeyValuepairs</code> instance
+	 */
+	public static KeyValuePairs parseResource(String aResource) {
+		URL l_url = ClassUtil.getResourceNonNull(aResource);
+
+		try (BufferedReader l_rdr = new BufferedReader(new InputStreamReader(l_url
+			.openStream(),
+			StandardCharsets.UTF_8))) {
 
 			return buildPairs(l_rdr.lines().toList());
 		} catch (Exception anEx) {
@@ -69,19 +89,19 @@ public class KeyValuePairs {
 	private static KeyValuePairs buildPairs(List<String> aList) {
 		KeyValuePairs l_ret = new KeyValuePairs();
 		List<String> l_list = aList.stream()
-				.map(l -> l.strip())
-				.filter(l -> l.length() > 0 && !l.startsWith("#")) //$NON-NLS-1$
-				.map(l -> {
-					String l_line = l;
-					int l_ind = l.indexOf("#"); //$NON-NLS-1$
+			.map(l -> l.strip())
+			.filter(l -> l.length() > 0 && !l.startsWith("#")) //$NON-NLS-1$
+			.map(l -> {
+				String l_line = l;
+				int l_ind = l.indexOf("#"); //$NON-NLS-1$
 
-					if (l_ind > 0) {
-						l_line = l.substring(0, l_ind);
-					}
-					return l_line;
-				})
-				.collect(Collectors.toList());
-		
+				if (l_ind > 0) {
+					l_line = l.substring(0, l_ind);
+				}
+				return l_line;
+			})
+			.collect(Collectors.toList());
+
 		l_list.forEach(l -> {
 			String[] l_split = l.split("=", 2); //$NON-NLS-1$
 
