@@ -17,7 +17,7 @@ import biz.car.config.ACS;
  * @version 2.0.0 08.01.2026 08:32:08
  */
 public interface CAR {
-	
+
 	/**
 	 * String constant ".conf" to be used as a file extension.
 	 */
@@ -35,6 +35,10 @@ public interface CAR {
 	 * String constant ".jar" to be used as a file extension.
 	 */
 	String _jar = VAL._jar;
+	/**
+	 * String constant ".kv" to be used as a file extension.
+	 */
+	String _kv = VAL._kv;
 	/**
 	 * String constant ".properties" to be used as a file extension.
 	 */
@@ -99,10 +103,12 @@ public interface CAR {
 	 * Key for the pattern parameter in Logger layouts.
 	 */
 	String PATTERN = VAR.PATTERN;
+
 	/**
 	 * The key for the PERIOD parameter of a timer task.<br>
 	 */
 	String PERIOD = VAR.PERIOD;
+
 	/**
 	 * Message pattern to indicate that a resource was not found.
 	 */

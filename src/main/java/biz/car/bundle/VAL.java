@@ -19,6 +19,7 @@ public class VAL {
 	public static String _csv;
 	public static String _default;
 	public static String _jar;
+	public static String _kv;
 	public static String _properties;
 	public static String _sql;
 	public static String dateFormat;
