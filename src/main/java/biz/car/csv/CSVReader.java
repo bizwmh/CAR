@@ -56,9 +56,10 @@ public class CSVReader extends XFileReader {
 		}
 		myParser = new CSVParser(delim);
 		List<String> l_hdr = readFields();
-		hdr = CSVRecord.Header(l_hdr).Delimiter(delim);
 
 		l_hdr.set(0, l_hdr.get(0).replace(CSV.BOM, "")); //$NON-NLS-1$
+
+		hdr = CSVRecord.Header(l_hdr).Delimiter(delim);
 		resetRecordCount();
 	}
 
