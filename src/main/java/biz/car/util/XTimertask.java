@@ -94,6 +94,7 @@ public abstract class XTimertask extends CConfig implements Runnable {
 					aTask.run();
 				} catch (Exception anEx) {
 					myTimer.cancel();
+					error(anEx.getMessage());
 					error(MSG.TIMER_CANCELLED, getName());
 				}
 			}
