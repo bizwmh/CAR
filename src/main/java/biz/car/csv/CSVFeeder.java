@@ -60,16 +60,23 @@ public class CSVFeeder extends CConfig implements XRunnable {
 
 		if (hasProperty(KV)) {
 			String l_kv = getString(KV);
-			Class<?> l_class = getClass();
-			
-			Optional<URL> l_url = ClassUtil.getResource(l_class, l_kv);
-			
+			Optional<URL> l_url = ClassUtil.getResource(l_kv);
+			KeyValuePairs l_kvPairs = null;
+
 			if (l_url.isPresent()) {
-				KeyValuePairs l_kvPairs = KeyValuePairs.parseResource(l_class, l_kv);
+				l_kvPairs = KeyValuePairs.parseResource(l_kv);
 				mapper = new CSVMapper(l_kvPairs);
 			} else {
-				if (Paths.get(l_kv).toFile().isFile()) {
-					mapper = CSVMapper.parseFile(getString(KV));
+				Class<?> l_class = getClass();
+				l_url = ClassUtil.getResource(l_class, l_kv);
+
+				if (l_url.isPresent()) {
+					l_kvPairs = KeyValuePairs.parseResource(l_class, l_kv);
+					mapper = new CSVMapper(l_kvPairs);
+				} else {
+					if (Paths.get(l_kv).toFile().isFile()) {
+						mapper = CSVMapper.parseFile(l_kv);
+					}
 				}
 			}
 		}
@@ -79,7 +86,7 @@ public class CSVFeeder extends CConfig implements XRunnable {
 	public void dispose() {
 		if (myHandler != null) {
 			myHandler.dispose();
-			
+
 			myHandler = null;
 		}
 	}
