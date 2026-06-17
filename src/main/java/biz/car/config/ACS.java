@@ -32,11 +32,6 @@ public interface ACS {
 	Config APP = ConfigFactory.load();
 
 	/**
-	 * The JVM environment variables
-	 */
-	Config ENV = ConfigFactory.systemEnvironment();
-
-	/**
 	 * Static class fields will be initialized by the values found in the
 	 * configuration file. This is done for fields where the field name matches the
 	 * entry in the configuration file.<br>
