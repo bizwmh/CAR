@@ -86,7 +86,7 @@ public interface XLogger {
 	default XRuntimeException exception(Throwable aCause) {
 		XRuntimeException l_ret = new XRuntimeException(aCause);
 
-		logger().error(l_ret.traceMessage());
+		logger().error(l_ret.traceMessage(), aCause);
 		return l_ret;
 	}
 
