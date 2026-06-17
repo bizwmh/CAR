@@ -22,6 +22,11 @@ import biz.car.config.ACS;
 public class SYS {
 
 	/**
+	 * The JVM environment variables
+	 */
+	public static Config ENV = ConfigFactory.systemEnvironment();
+
+	/**
 	 * The default system logger. <br>
 	 * The name of the logger can be set in the application properties file.
 	 */
@@ -32,9 +37,15 @@ public class SYS {
 	 */
 	public static Config PROPS = ConfigFactory.systemProperties();
 
+	/**
+	 * The JVM system properties combined with environment variables.
+	 */
+	public static Config VM_CONFIG;
+
 	static {
 		String l_name = ACS.APP.getString(VAL.systemLogger);
 		LOG = XLoggerFactory.getLogger(l_name);
+		VM_CONFIG = PROPS.withFallback(ENV);
 	}
 
 	/**
@@ -56,8 +67,9 @@ public class SYS {
 		ConfigFactory.invalidateCaches();
 
 		PROPS = ConfigFactory.systemProperties();
+		VM_CONFIG = PROPS.withFallback(ENV);
 	}
-	
+
 	/**
 	 * Creates a <code>SYS</code> instance.
 	 */
