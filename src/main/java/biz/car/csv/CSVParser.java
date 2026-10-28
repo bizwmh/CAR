@@ -21,9 +21,27 @@ public class CSVParser {
 	private static final boolean DONE = true;
 	private static final boolean PENDING = false;
 
+	/**
+	 * TODO split
+	 * @param aLine
+	 * @param aDelim
+	 * @return
+	 */
+	public static List<String> split(String aLine, String aDelim) {
+		String[] l_array = aLine.split(aDelim);
+		List<String> l_ret = new ArrayList<>();
+
+		l_ret.addAll(Arrays.asList(l_array));
+
+		if (aLine.endsWith(aDelim)) {
+			l_ret.add(""); //$NON-NLS-1$
+		}
+		return l_ret;
+	}
 	private String delim;
-	private boolean state;
 	private List<String> fieldList;
+
+	private boolean state;
 
 	/**
 	 * Creates a default <code>CSVParser</code> instance.
@@ -60,7 +78,7 @@ public class CSVParser {
 	 *         if content is pending in case of a multiline record
 	 */
 	public boolean parse(String aLine) {
-		List<String> l_tokenList = split(aLine);
+		List<String> l_tokenList = split(aLine, delim);
 		String l_token = null;
 
 		for (int i = 0; i < l_tokenList.size(); i++) {
@@ -135,18 +153,6 @@ public class CSVParser {
 			if (l_rest == 1) {
 				l_ret = DONE;
 			}
-		}
-		return l_ret;
-	}
-
-	private List<String> split(String aLine) {
-		String[] l_array = aLine.split(delim);
-		List<String> l_ret = new ArrayList<>();
-
-		l_ret.addAll(Arrays.asList(l_array));
-
-		if (aLine.endsWith(delim)) {
-			l_ret.add(""); //$NON-NLS-1$
 		}
 		return l_ret;
 	}
