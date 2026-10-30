@@ -22,10 +22,11 @@ public class CSVParser {
 	private static final boolean PENDING = false;
 
 	/**
-	 * TODO split
-	 * @param aLine
-	 * @param aDelim
-	 * @return
+	 * Breaks a CSV text line into fields.
+	 * 
+	 * @param aLine  the line to split into fields
+	 * @param aDelim the field delimiter
+	 * @return the list of fields
 	 */
 	public static List<String> split(String aLine, String aDelim) {
 		String[] l_array = aLine.split(aDelim);
@@ -38,6 +39,7 @@ public class CSVParser {
 		}
 		return l_ret;
 	}
+
 	private String delim;
 	private List<String> fieldList;
 
@@ -119,8 +121,8 @@ public class CSVParser {
 	 * pending.
 	 * 
 	 * @param aToken the CSV token to check
-	 * @return <code>true</code> if the token starts with a double quote but does not have an end
-	 *         double quote.
+	 * @return <code>true</code> if the token starts with a double quote but does
+	 *         not have an end double quote.
 	 */
 	private boolean off2on(String aToken) {
 		boolean l_ret = DONE;

@@ -24,6 +24,8 @@ public class CSVReader extends XFileReader {
 
 	private String delim;
 	private CSVHeader hdr;
+	private int headerLine;
+	private String headerText;
 	private CSVParser myParser;
 
 	/**
@@ -31,6 +33,8 @@ public class CSVReader extends XFileReader {
 	 */
 	public CSVReader() {
 		super();
+
+		headerLine = 1;
 	}
 
 	/**
@@ -46,6 +50,8 @@ public class CSVReader extends XFileReader {
 	 * @param aFile the file to use as the input medium.
 	 * @throws IOFoundException if the given file could not be found on the file
 	 *                          system
+	 * @throws IOException      if the header line could not be found in the file.
+	 *                          The file is closed in this case.
 	 */
 	public void open(File aFile) throws IOException {
 		Objects.requireNonNull(aFile);
@@ -55,7 +61,7 @@ public class CSVReader extends XFileReader {
 			delim = CSV.DELIMITER;
 		}
 		myParser = new CSVParser(delim);
-		List<String> l_hdr = readFields();
+		List<String> l_hdr = readHeader();
 
 		l_hdr.set(0, l_hdr.get(0).replace(CSV.BOM, "")); //$NON-NLS-1$
 
@@ -109,12 +115,92 @@ public class CSVReader extends XFileReader {
 		throw new IllegalStateException();
 	}
 
-	private List<String> readFields() throws IOException {
-		String l_line = read();
+	/**
+	 * Selects the header row by its line number. All lines in front of it are
+	 * skipped. By default, the first line of the file is the header row.
+	 *
+	 * @param aLine the line number of the header row, starting at 1
+	 * @throws IllegalArgumentException if the line number is less than 1
+	 * @throws IllegalStateException    if this reader has already been opened.
+	 */
+	public void setHeaderLine(int aLine) {
+		if (myParser == null) {
+			if (aLine < 1) {
+				throw new IllegalArgumentException(String.valueOf(aLine));
+			}
+			headerLine = aLine;
+			headerText = null;
+
+			return;
+		}
+		throw new IllegalStateException();
+	}
+
+	/**
+	 * Selects the header row by its content. The header row is the first line
+	 * starting with the given text, a leading byte order mark or double quote of
+	 * the line is ignored. All lines in front of it are skipped.
+	 *
+	 * @param aText the text at the start of the header row
+	 * @throws IllegalStateException if this reader has already been opened.
+	 */
+	public void setHeaderLine(String aText) {
+		if (myParser == null) {
+			headerText = Objects.requireNonNull(aText);
+
+			return;
+		}
+		throw new IllegalStateException();
+	}
+
+	private boolean isHeader(String aLine) {
+		String l_line = aLine.replace(CSV.BOM, ""); //$NON-NLS-1$
+
+		if (l_line.startsWith(CSV.DQ)) {
+			l_line = l_line.substring(1);
+		}
+		return l_line.startsWith(headerText);
+	}
+
+	private List<String> parseFields(String aLine) throws IOException {
+		String l_line = aLine;
 
 		while (l_line != null && myParser.parse(l_line) != true) {
 			l_line = read();
 		}
 		return myParser.fields();
+	}
+
+	private List<String> readFields() throws IOException {
+		return parseFields(read());
+	}
+
+	private List<String> readHeader() throws IOException {
+		String l_line = seekHeader();
+		List<String> l_ret = l_line == null ? null : parseFields(l_line);
+
+		if (l_ret == null) {
+			String l_header = headerText == null ? String.valueOf(headerLine) : headerText;
+
+			close();
+
+			throw new IOException("CSV header '" + l_header + "' not found in file '" + getName() + "'."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
+		return l_ret;
+	}
+
+	private String seekHeader() throws IOException {
+		String l_line = read();
+
+		if (headerText != null) {
+			while (l_line != null && !isHeader(l_line)) {
+				l_line = read();
+			}
+		} else {
+			for (int i = 1; l_line != null && i < headerLine; i++) {
+				l_line = read();
+			}
+		}
+		return l_line;
 	}
 }
