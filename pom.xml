@@ -16,7 +16,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<target.deploy.lib>C:/IDE/WORKSPACE/CAR.OSGi/lib</target.deploy.lib>
 		<target.xenv.lib>C:/IDE/XENV/OASE/lib</target.xenv.lib>
-		<target.elster.lib>C:/Users/it-lo/OneDrive/Documents/Einkommensteuer/OASE/lib</target.elster.lib>
+		<target.elster.lib>C:/Users/it-lo/OneDrive/Documents/Finanzen/OASE/lib</target.elster.lib>
 	</properties>
 
 	<dependencies>
@@ -42,6 +42,18 @@
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-core</artifactId>
 			<version>1.5.7</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>5.2.5</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>5.2.5</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
